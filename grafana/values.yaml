@@ -1,11 +1,65 @@
 grafana:
   persistence:
     enabled: true
-    size: 2Gi
+    size: 5Gi
+    storageClassName: gp2
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 200m
+      cpu: 300m
       memory: 512Mi
+  
+  # 모니터링 노드 그룹에 배포
+  nodeSelector:
+    role: monitoring
+  
+  tolerations:
+  - key: "role"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoSchedule"
+  
+  # 보안 설정
+  securityContext:
+    runAsUser: 472
+    runAsGroup: 472
+    fsGroup: 472
+  
+  # 대시보드 자동 설정
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'kubernetes'
+        orgId: 1
+        folder: 'Kubernetes'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/kubernetes
+  
+  # 기본 데이터 소스 설정
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.monitoring.svc.cluster.local
+        access: proxy
+        isDefault: true
+  
+  # 관리자 비밀번호
+  adminPassword: admin
+  
+  # 서비스 설정
+  service:
+    type: ClusterIP
+    port: 80
+  
+  # 인그레스 설정 (필요시 활성화)
+  ingress:
+    enabled: false

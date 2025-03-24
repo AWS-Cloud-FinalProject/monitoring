@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-monitor
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: backend-app  # 서비스의 레이블과 일치
+  namespaceSelector:
+    matchNames:
+      - backend  # 백엔드 서비스가 있는 네임스페이스
+  endpoints:
+  - port: http    # 포트 이름 (http로 맞게 설정됨)
+    interval: 15s
+    path: /metrics  # 메트릭 엔드포인트 경로 (실제 경로 확인 필요)
+    scheme: http 

@@ -1,4 +1,13 @@
-groups:
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: system-recording-rules
+  namespace: monitoring
+  labels:
+    app: prometheus
+    role: recording-rules
+spec:
+  groups:
   - name: k8s.system.rules
     rules:
     # CPU 사용률 규칙
@@ -50,4 +59,4 @@ groups:
     
     # Pod 재시작 횟수 규칙
     - record: pod:restart_count:sum
-      expr: sum(kube_pod_container_status_restarts_total) by (namespace, pod)
+      expr: sum(kube_pod_container_status_restarts_total) by (namespace, pod) 

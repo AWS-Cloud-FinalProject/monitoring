@@ -1,4 +1,13 @@
-groups:
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: application-recording-rules
+  namespace: monitoring
+  labels:
+    app: prometheus
+    role: recording-rules
+spec:
+  groups:
   - name: k8s.applications.rules
     rules:
     # HTTP 요청 처리율
@@ -49,4 +58,4 @@ groups:
     
     # 서비스 레이턴시 (Istio가 있는 경우 사용가능)
     - record: service:request_duration_seconds:p99
-      expr: histogram_quantile(0.99, sum(rate(istio_request_duration_milliseconds_bucket{reporter="destination"}[5m])) by (destination_service_namespace, destination_service_name, le)) / 1000
+      expr: histogram_quantile(0.99, sum(rate(istio_request_duration_milliseconds_bucket{reporter="destination"}[5m])) by (destination_service_namespace, destination_service_name, le)) / 1000 
