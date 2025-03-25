@@ -5,9 +5,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.server.replicas | default 1 }}
-  retention: {{ .Values.server.retention | default "10d" }}
+  retention: {{ .Values.server.retention | default "2d" }}
   serviceAccountName: prometheus
   securityContext:
     runAsNonRoot: true
@@ -37,6 +38,7 @@ spec:
   storage:
     volumeClaimTemplate:
       spec:
+        storageClassName: gp2
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:

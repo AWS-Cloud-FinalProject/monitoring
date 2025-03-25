@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: alertmanager
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.alertmanager.replicas | default 1 }}
   serviceAccountName: alertmanager
@@ -22,6 +23,7 @@ spec:
   storage:
     volumeClaimTemplate:
       spec:
+        storageClassName: gp2
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
