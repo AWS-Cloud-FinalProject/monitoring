@@ -10,11 +10,9 @@ spec:
     chart: kube-prometheus-stack
     targetRevision: 45.7.1
     helm:
-      # ConfigMap 참조 설정
-      valuesFrom:
-      - kind: ConfigMap
-        name: prometheus-values
-        valuesKey: values.yaml
+      # values.yaml 파일 참조
+      valueFiles:
+      - https://raw.githubusercontent.com/AWS-Cloud-FinalProject/monitoring/main/prometheus/values.yaml
       # PrometheusRule CR에 대한 선택자 설정만 별도로 추가
       values: |
         prometheus:

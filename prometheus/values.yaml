@@ -1,0 +1,202 @@
+# Prometheus 서버 기본 설정
+server:
+  retention: 2d  # 데이터 보존 기간 2일
+  # 리소스 요청 및 제한
+  resources:
+    requests:
+      cpu: 300m
+      memory: 1Gi
+    limits:
+      cpu: 600m
+      memory: 2Gi
+  
+  # 모니터링 노드 그룹 설정
+  nodeSelector:
+    role: monitoring
+    node-type: on-demand
+  
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoSchedule"
+  
+  # 영구 스토리지 설정  
+  persistentVolume:
+    enabled: true
+    size: 8Gi
+    storageClass: "gp2"
+  
+  # 보안 설정
+  securityContext:
+    runAsUser: 65534
+    runAsNonRoot: true
+    fsGroup: 65534
+  
+# Prometheus 스크레이핑 설정
+# 기본적으로 kubernetes-service-endpoints, kubernetes-pods 등을 자동으로 발견하도록 설정
+serviceDiscovery:
+  enabled: true
+
+# Prometheus 서버 상세 설정
+prometheus:
+  prometheusSpec:
+    # Replica 설정 (고가용성)
+    replicas: 2
+    
+    # PrometheusRule 선택자 설정 (중요: 알림 및 레코딩 규칙 연결)
+    ruleSelector:
+      matchExpressions:
+      - key: app
+        operator: In
+        values:
+        - prometheus
+      - key: role
+        operator: In
+        values:
+        - alert-rules
+        - recording-rules
+    
+    # Pod 업데이트 전략
+    updateStrategy:
+      type: RollingUpdate
+    
+    # 파드 중단 예산 (PDB)
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    
+    # ServiceMonitor 선택자 설정
+    serviceMonitorSelector:
+      matchLabels:
+        app: prometheus
+    
+    # 리소스 설정은 server 섹션에서 상속됨
+    
+    # 외부 라벨 설정
+    externalLabels:
+      cluster: production
+      environment: eks
+
+# 알림 설정
+alertmanager:
+  enabled: true
+  # AlertManager 상세 설정
+  alertmanagerSpec:
+    # Replica 설정 (고가용성)
+    replicas: 2
+    
+    # Pod 업데이트 전략
+    updateStrategy:
+      type: RollingUpdate
+    
+    # 트래픽 라우팅
+    routePrefix: /alertmanager
+  
+  persistence:
+    enabled: true
+    size: 5Gi
+
+  # 알림 매니저도 모니터링 노드에 배치
+  nodeSelector:
+    role: monitoring
+    node-type: on-demand
+  
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoSchedule"
+  
+  # 알림 라우팅 설정
+  config:
+    route:
+      group_by: ['job', 'alertname', 'namespace']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'null'
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: 'null'
+    receivers:
+    - name: 'null'
+  
+# Prometheus Operator 설정
+prometheusOperator:
+  enabled: true
+  # 오퍼레이터도 모니터링 노드에 배치
+  nodeSelector:
+    role: monitoring
+    node-type: on-demand
+  
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoSchedule"
+
+# 기본 스크레이퍼 설정
+scrapeInterval: 120s
+evaluationInterval: 120s
+
+# 노드 익스포터 설정
+nodeExporter:
+  enabled: true
+  # 노드 익스포터는 모든 노드에 배포해야 하므로 nodeSelector 없음
+  tolerations:
+  - operator: "Exists"  # 모든 노드에 배포 가능하도록 설정
+
+# kube-state-metrics 설정
+kubeStateMetrics:
+  enabled: true
+  # Replica 설정
+  replicas: 2
+  
+  nodeSelector:
+    role: monitoring
+    node-type: on-demand
+  
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoSchedule"
+
+# 최적화 설정
+extraFlags:
+  - "storage.tsdb.wal-compression"  # WAL 압축 활성화
+
+# 불필요한 컴포넌트 비활성화
+grafana:
+  enabled: false  # Grafana가 별도로 배포되어 있다면 비활성화
+
+defaultRules:
+  create: true  # 자체 규칙을 사용하므로 기본 규칙 비활성화
+
+# 필요한 쿠버네티스 컴포넌트만 활성화
+kubelet:
+  enabled: true  # 노드 메트릭은 중요하므로 활성화 유지
+
+coreDns:
+  enabled: true  # DNS 메트릭은 중요하므로 활성화 유지
+
+# 불필요한 컴포넌트 비활성화
+kubeApiServer:
+  enabled: false  # API 서버 메트릭이 필요없다면 비활성화
+
+kubeDns:
+  enabled: false  # coreDns를 사용한다면 비활성화
+
+kubeControllerManager:
+  enabled: false  # 필요없다면 비활성화
+
+kubeEtcd:
+  enabled: false  # 필요없다면 비활성화
+
+kubeScheduler:
+  enabled: false  # 필요없다면 비활성화
+
+kubeProxy:
+  enabled: false  # 필요없다면 비활성화 
