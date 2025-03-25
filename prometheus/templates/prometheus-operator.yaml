@@ -6,6 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: prometheus-operator
     app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: 1
   selector:
@@ -16,6 +17,7 @@ spec:
       labels:
         app.kubernetes.io/name: prometheus-operator
     spec:
+      serviceAccountName: prometheus-operator
       containers:
       - name: prometheus-operator
         image: quay.io/prometheus-operator/prometheus-operator:v0.63.0
@@ -33,4 +35,4 @@ spec:
             cpu: 100m
             memory: 100Mi
         securityContext:
-          allowPrivilegeEscalation: false 
+          allowPrivilegeEscalation: false
