@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring.git
     path: prometheus/alerts
-    targetRevision: HEAD
+    targetRevision: develop
     directory:
       recurse: false
       include: "critical-alerts.yaml"  # critical-alerts.yaml만 포함

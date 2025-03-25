@@ -12,7 +12,7 @@ spec:
     helm:
       # values.yaml 파일 참조
       valueFiles:
-      - https://raw.githubusercontent.com/AWS-Cloud-FinalProject/monitoring/main/prometheus/values.yaml
+      - https://raw.githubusercontent.com/AWS-Cloud-FinalProject/monitoring/develop/prometheus/values.yaml
       # PrometheusRule CR에 대한 선택자 설정만 별도로 추가
       values: |
         prometheus:
