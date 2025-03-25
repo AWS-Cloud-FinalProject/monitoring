@@ -1,0 +1,9 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus-recording-rules
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: prometheus
+    role: recording-rules
+{{ (.Files.Glob "recording-rules/critical-recording-rules.yaml").AsConfig | indent 2 }} 

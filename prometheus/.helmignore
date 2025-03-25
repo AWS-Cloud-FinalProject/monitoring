@@ -1,0 +1,16 @@
+# Patterns to ignore when building packages.
+# This supports shell glob matching, relative path matching, and
+# negation (prefixed with !).
+# By default, the chart's crds/ directory is included,
+# so we don't need to explicitly include it.
+.git
+.gitignore
+*.swp
+*.bak
+*.tmp
+*~
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/ 

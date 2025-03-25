@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: prometheus
+spec:
+  replicas: {{ .Values.server.replicas | default 1 }}
+  retention: {{ .Values.server.retention | default "10d" }}
+  serviceAccountName: prometheus
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  serviceMonitorSelector:
+    matchLabels:
+      app: prometheus
+  ruleSelector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - prometheus
+    - key: role
+      operator: In
+      values:
+      - alert-rules
+      - recording-rules
+  resources:
+    requests:
+      memory: {{ .Values.server.resources.requests.memory | default "1Gi" }}
+      cpu: {{ .Values.server.resources.requests.cpu | default "300m" }}
+    limits:
+      memory: {{ .Values.server.resources.limits.memory | default "2Gi" }}
+      cpu: {{ .Values.server.resources.limits.cpu | default "600m" }}
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.server.persistentVolume.size | default "8Gi" }}
+  alerting:
+    alertmanagers:
+    - namespace: {{ .Release.Namespace }}
+      name: alertmanager
+      port: web 

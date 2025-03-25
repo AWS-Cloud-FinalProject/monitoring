@@ -6,38 +6,14 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: 45.7.1
-    helm:
-      # values.yaml 파일 참조
-      valueFiles:
-      - $values/prometheus/values.yaml
-      # PrometheusRule CR에 대한 선택자 설정만 별도로 추가
-      values: |
-        prometheus:
-          prometheusSpec:
-            ruleSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - prometheus
-              - key: role
-                operator: In
-                values:
-                - alert-rules
-                - recording-rules
-  # GitHub 저장소에서 values.yaml 파일을 가져오기 위한 extraSources 설정
-  extraSources:
-    - ref: values
-      repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring
-      targetRevision: develop
-  
+    # GitHub 레포지토리 내 커스텀 Helm 차트 사용
+    repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring.git
+    targetRevision: develop
+    path: prometheus
+    # GitHub 레포지토리 내에 있는 Helm 차트이므로 helm.values 섹션은 제거
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
-  
   syncPolicy:
     automated:
       prune: true

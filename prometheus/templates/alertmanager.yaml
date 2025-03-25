@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: alertmanager
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: alertmanager
+spec:
+  replicas: {{ .Values.alertmanager.replicas | default 1 }}
+  serviceAccountName: alertmanager
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  resources:
+    requests:
+      memory: 200Mi
+      cpu: 100m
+    limits:
+      memory: 400Mi
+      cpu: 200m
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.alertmanager.persistence.size | default "2Gi" }}
+  alertmanagerConfigSelector:
+    matchLabels:
+      app.kubernetes.io/name: alertmanager-config 

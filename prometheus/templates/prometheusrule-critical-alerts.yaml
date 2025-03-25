@@ -1,0 +1,9 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus-critical-alerts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: prometheus
+    role: alert-rules
+{{ (.Files.Glob "alerts/critical-alerts.yaml").AsConfig | indent 2 }} 
