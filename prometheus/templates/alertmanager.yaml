@@ -20,14 +20,15 @@ spec:
     limits:
       memory: 400Mi
       cpu: 200m
-  storage:
-    volumeClaimTemplate:
-      spec:
-        storageClassName: gp2
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: {{ .Values.alertmanager.persistence.size | default "2Gi" }}
+  # 영구 저장소 대신 임시 저장소 사용
+  # storage:
+  #   volumeClaimTemplate:
+  #     spec:
+  #       storageClassName: gp2
+  #       accessModes: ["ReadWriteOnce"]
+  #       resources:
+  #         requests:
+  #           storage: {{ .Values.alertmanager.persistence.size | default "2Gi" }}
   alertmanagerConfigSelector:
     matchLabels:
       app.kubernetes.io/name: alertmanager-config 

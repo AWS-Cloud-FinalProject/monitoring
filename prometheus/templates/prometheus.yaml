@@ -35,14 +35,15 @@ spec:
     limits:
       memory: {{ .Values.server.resources.limits.memory | default "2Gi" }}
       cpu: {{ .Values.server.resources.limits.cpu | default "600m" }}
-  storage:
-    volumeClaimTemplate:
-      spec:
-        storageClassName: gp2
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: {{ .Values.server.persistentVolume.size | default "8Gi" }}
+  # 영구 저장소 대신 임시 저장소 사용
+  # storage:
+  #   volumeClaimTemplate:
+  #     spec:
+  #       storageClassName: gp2
+  #       accessModes: ["ReadWriteOnce"]
+  #       resources:
+  #         requests:
+  #           storage: {{ .Values.server.persistentVolume.size | default "8Gi" }}
   alerting:
     alertmanagers:
     - namespace: {{ .Release.Namespace }}
