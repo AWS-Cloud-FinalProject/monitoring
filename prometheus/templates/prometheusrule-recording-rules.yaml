@@ -8,12 +8,24 @@ metadata:
     role: recording-rules
 spec:
   groups:
-  {{- range $path, $_ := .Files.Glob "recording-rules/*.yaml" }}
-  {{- with $.Files.Get $path | fromYaml }}
-  {{- range .spec.groups }}
-  - name: {{ .name | default (printf "%s" ($path | base | trimSuffix ".yaml")) }}
+  - name: node-recording-rules
     rules:
-{{ toYaml .rules | indent 4 }}
-  {{- end }}
-  {{- end }}
-  {{- end }} 
+    - record: node:cpu_utilization:avg5m
+      expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+    
+    - record: node:memory_utilization:percent
+      expr: 100 * (1 - ((node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes))
+    
+    - record: node:disk_utilization:percent
+      expr: 100 * (1 - node_filesystem_free_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})
+  
+  - name: service-recording-rules
+    rules:
+    - record: service:request_latency:p99
+      expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service, namespace))
+    
+    - record: service:request_latency:p95
+      expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service, namespace))
+    
+    - record: service:request_latency:p50
+      expr: histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service, namespace)) 

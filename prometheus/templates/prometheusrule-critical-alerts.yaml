@@ -8,12 +8,34 @@ metadata:
     role: alert-rules
 spec:
   groups:
-  {{- range $path, $_ := .Files.Glob "alerts/*.yaml" }}
-  {{- with $.Files.Get $path | fromYaml }}
-  {{- range .spec.groups }}
-  - name: {{ .name | default (printf "%s" ($path | base | trimSuffix ".yaml")) }}
+  - name: kubernetes-critical-alerts
     rules:
-{{ toYaml .rules | indent 4 }}
-  {{- end }}
-  {{- end }}
-  {{- end }} 
+    - alert: NodeCPUUsageCritical
+      expr: node:cpu_utilization:avg5m > 95
+      for: 5m
+      labels:
+        severity: critical
+        type: system
+      annotations:
+        summary: "노드 CPU 사용량 심각: {{ $labels.instance }}"
+        description: "노드 {{ $labels.instance }}의 CPU 사용량이 5분 이상 95%를 초과했습니다. (현재 값: {{ $value }}%)"
+    
+    - alert: NodeMemoryUsageCritical
+      expr: node:memory_utilization:percent > 95
+      for: 5m
+      labels:
+        severity: critical
+        type: system
+      annotations:
+        summary: "노드 메모리 사용량 심각: {{ $labels.instance }}"
+        description: "노드 {{ $labels.instance }}의 메모리 사용량이 5분 이상 95%를 초과했습니다. (현재 값: {{ $value }}%)"
+    
+    - alert: NodeNotReady
+      expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+      for: 5m
+      labels:
+        severity: critical
+        type: system
+      annotations:
+        summary: "노드 Ready 상태 아님: {{ $labels.node }}"
+        description: "노드 {{ $labels.node }}가 5분 이상 Ready 상태가 아닙니다." 
