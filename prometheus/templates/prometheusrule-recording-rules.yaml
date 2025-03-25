@@ -9,7 +9,11 @@ metadata:
 spec:
   groups:
   {{- range $path, $_ := .Files.Glob "recording-rules/*.yaml" }}
-  - name: {{ $path | base | trimSuffix ".yaml" }}
+  {{- with $.Files.Get $path | fromYaml }}
+  {{- range .spec.groups }}
+  - name: {{ .name | default (printf "%s" ($path | base | trimSuffix ".yaml")) }}
     rules:
-{{ $.Files.Get $path | indent 4 }}
+{{ toYaml .rules | indent 4 }}
+  {{- end }}
+  {{- end }}
   {{- end }} 
