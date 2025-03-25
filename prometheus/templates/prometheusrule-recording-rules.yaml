@@ -6,4 +6,9 @@ metadata:
   labels:
     app: prometheus
     role: recording-rules
-{{ (.Files.Glob "recording-rules/critical-recording-rules.yaml").AsConfig | indent 2 }} 
+spec:
+  groups:
+  {{- range $path, $_ := .Files.Glob "recording-rules/*.yaml" }}
+  {{- $content := $.Files.Get $path }}
+  {{- tpl ($content | replace "$__rate_interval" "$$__rate_interval") $ | nindent 2 }}
+  {{- end }} 

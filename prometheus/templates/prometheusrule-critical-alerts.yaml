@@ -6,4 +6,9 @@ metadata:
   labels:
     app: prometheus
     role: alert-rules
-{{ (.Files.Glob "alerts/critical-alerts.yaml").AsConfig | indent 2 }} 
+spec:
+  groups:
+  {{- range $path, $_ := .Files.Glob "alerts/*.yaml" }}
+  {{- $content := $.Files.Get $path }}
+  {{- tpl ($content | replace "$labels" "$$labels") $ | nindent 2 }}
+  {{- end }} 
