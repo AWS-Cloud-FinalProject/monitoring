@@ -10,5 +10,10 @@ spec:
   groups:
   {{- range $path, $_ := .Files.Glob "recording-rules/*.yaml" }}
   {{- $content := $.Files.Get $path }}
-  {{- tpl ($content | replace "$__rate_interval" "$$__rate_interval") $ | nindent 2 }}
+  {{- $content := $content | replace "$__rate_interval" "$$__rate_interval" }}
+  {{- $content := $content | replace "$value" "$$value" }}
+  {{- $content := $content | replace "$__range" "$$__range" }}
+  {{- $content := $content | replace "$__interval" "$$__interval" }}
+  {{- $content := $content | replace "$__name__" "$$__name__" }}
+  {{- tpl $content $ | nindent 2 }}
   {{- end }} 

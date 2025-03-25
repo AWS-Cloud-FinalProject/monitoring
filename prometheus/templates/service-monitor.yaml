@@ -1,5 +1,9 @@
 {{- range $path, $_ := .Files.Glob "service-monitors/*.yaml" }}
 {{- $content := $.Files.Get $path }}
+{{- $content := $content | replace "$labels" "$$labels" }}
+{{- $content := $content | replace "$value" "$$value" }}
+{{- $content := $content | replace "$__interval" "$$__interval" }}
+{{- $content := $content | replace "$__rate_interval" "$$__rate_interval" }}
 {{- tpl $content $ }}
 ---
 {{- end }} 

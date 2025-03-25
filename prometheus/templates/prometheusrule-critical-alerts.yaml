@@ -10,5 +10,11 @@ spec:
   groups:
   {{- range $path, $_ := .Files.Glob "alerts/*.yaml" }}
   {{- $content := $.Files.Get $path }}
-  {{- tpl ($content | replace "$labels" "$$labels") $ | nindent 2 }}
+  {{- $content := $content | replace "$labels" "$$labels" }}
+  {{- $content := $content | replace "$value" "$$value" }}
+  {{- $content := $content | replace "$__range" "$$__range" }}
+  {{- $content := $content | replace "$__interval" "$$__interval" }}
+  {{- $content := $content | replace "$alertname" "$$alertname" }}
+  {{- $content := $content | replace "$alerts" "$$alerts" }}
+  {{- tpl $content $ | nindent 2 }}
   {{- end }} 
