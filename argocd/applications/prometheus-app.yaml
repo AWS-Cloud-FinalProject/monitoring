@@ -6,17 +6,19 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring.git
+    repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
     targetRevision: 45.7.1
     helm:
-      valueFiles:
-      - prometheus/values.yaml
-      # Values.yaml에 없거나 오버라이드가 필요한 추가 설정만 여기에 정의
+      # ConfigMap 참조 설정
+      valuesFrom:
+      - kind: ConfigMap
+        name: prometheus-values
+        valuesKey: values.yaml
+      # PrometheusRule CR에 대한 선택자 설정만 별도로 추가
       values: |
         prometheus:
           prometheusSpec:
-            # PrometheusRule CR 참조 설정 
             ruleSelector:
               matchExpressions:
               - key: app
@@ -28,30 +30,6 @@ spec:
                 values:
                 - alert-rules
                 - recording-rules
-        
-        # AlertManager 알림 설정 
-        alertmanager:
-          config:
-            global:
-              resolve_timeout: 5m
-            route:
-              group_by: ['job', 'alertname', 'namespace']
-              group_wait: 30s
-              group_interval: 5m
-              repeat_interval: 12h
-              receiver: 'null'
-              routes:
-              - match:
-                  alertname: Watchdog
-                receiver: 'null'
-            receivers:
-            - name: 'null'
-            # 실제 환경에서는 아래 예시처럼 알림 채널 추가 필요
-            # - name: 'slack'
-            #   slack_configs:
-            #   - api_url: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXX'
-            #     channel: '#monitoring-alerts'
-            #     send_resolved: true
   
   destination:
     server: https://kubernetes.default.svc
@@ -62,4 +40,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+    - CreateNamespace=true 

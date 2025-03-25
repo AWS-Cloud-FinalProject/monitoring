@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-values
+  namespace: monitoring
+data:
+  values.yaml: |
+    server:
+      retention: 2d  # 데이터 보존 기간 2일
+      # 리소스 요청 및 제한
+      resources:
+        requests:
+          cpu: 300m
+          memory: 1Gi
+        limits:
+          cpu: 600m
+          memory: 2Gi
+      
+      # 모니터링 노드 그룹 설정
+      nodeSelector:
+        role: monitoring
+        node-type: on-demand
+      
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "monitoring"
+        effect: "NoSchedule"
+      
+      # 영구 스토리지 설정  
+      persistentVolume:
+        enabled: true
+        size: 8Gi
+        storageClass: "gp2"
+      
+      # 보안 설정
+      securityContext:
+        runAsUser: 65534
+        runAsNonRoot: true
+        fsGroup: 65534
+      
+    # Prometheus 스크레이핑 설정
+    # 기본적으로 kubernetes-service-endpoints, kubernetes-pods 등을 자동으로 발견하도록 설정
+    serviceDiscovery:
+      enabled: true
+    
+    # 알림 설정
+    alertmanager:
+      enabled: true
+      persistence:
+        enabled: true
+        size: 5Gi
+      # 알림 매니저도 모니터링 노드에 배치
+      nodeSelector:
+        role: monitoring
+        node-type: on-demand
+      
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "monitoring"
+        effect: "NoSchedule"
+      
+    # Prometheus Operator 설정
+    prometheusOperator:
+      enabled: true
+      # 오퍼레이터도 모니터링 노드에 배치
+      nodeSelector:
+        role: monitoring
+        node-type: on-demand
+      
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "monitoring"
+        effect: "NoSchedule"
+      
+    # ServiceMonitor 설정 (CRD를 통한 모니터링 대상 설정)
+    serviceMonitorSelector:
+      matchLabels:
+        app: prometheus
+    
+    # 기본 스크레이퍼 설정
+    scrapeInterval: 60s
+    evaluationInterval: 30s
+    
+    # 노드 익스포터 설정
+    nodeExporter:
+      enabled: true
+      # 노드 익스포터는 모든 노드에 배포해야 하므로 nodeSelector 없음
+      tolerations:
+      - operator: "Exists"  # 모든 노드에 배포 가능하도록 설정
+    
+    # kube-state-metrics 설정
+    kubeStateMetrics:
+      enabled: true
+      nodeSelector:
+        role: monitoring
+        node-type: on-demand
+      
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "monitoring"
+        effect: "NoSchedule"
+    
+    # 최적화 설정
+    extraFlags:
+      - "storage.tsdb.wal-compression"  # WAL 압축 활성화 
