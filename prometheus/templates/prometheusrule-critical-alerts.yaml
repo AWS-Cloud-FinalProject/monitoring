@@ -7,4 +7,9 @@ metadata:
     app: prometheus
     role: alert-rules
 spec:
-{{ (.Files.Glob "alerts/*.yaml").AsConfig | indent 2 }} 
+  groups:
+  {{- range $path, $_ := .Files.Glob "alerts/*.yaml" }}
+  - name: {{ $path | base | trimSuffix ".yaml" }}
+    rules:
+{{ $.Files.Get $path | indent 4 }}
+  {{- end }} 

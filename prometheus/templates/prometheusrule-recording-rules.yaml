@@ -7,4 +7,9 @@ metadata:
     app: prometheus
     role: recording-rules
 spec:
-{{ (.Files.Glob "recording-rules/*.yaml").AsConfig | indent 2 }} 
+  groups:
+  {{- range $path, $_ := .Files.Glob "recording-rules/*.yaml" }}
+  - name: {{ $path | base | trimSuffix ".yaml" }}
+    rules:
+{{ $.Files.Get $path | indent 4 }}
+  {{- end }} 
