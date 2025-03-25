@@ -7,14 +7,4 @@ metadata:
     app: prometheus
     role: alert-rules
 spec:
-  groups:
-  {{- range $path, $_ := .Files.Glob "alerts/*.yaml" }}
-  {{- $content := $.Files.Get $path }}
-  {{- $content := $content | replace "$labels" "$$labels" }}
-  {{- $content := $content | replace "$value" "$$value" }}
-  {{- $content := $content | replace "$__range" "$$__range" }}
-  {{- $content := $content | replace "$__interval" "$$__interval" }}
-  {{- $content := $content | replace "$alertname" "$$alertname" }}
-  {{- $content := $content | replace "$alerts" "$$alerts" }}
-  {{- tpl $content $ | nindent 2 }}
-  {{- end }} 
+{{ (.Files.Glob "alerts/*.yaml").AsConfig | indent 2 }} 

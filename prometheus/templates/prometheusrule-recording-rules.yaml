@@ -7,13 +7,4 @@ metadata:
     app: prometheus
     role: recording-rules
 spec:
-  groups:
-  {{- range $path, $_ := .Files.Glob "recording-rules/*.yaml" }}
-  {{- $content := $.Files.Get $path }}
-  {{- $content := $content | replace "$__rate_interval" "$$__rate_interval" }}
-  {{- $content := $content | replace "$value" "$$value" }}
-  {{- $content := $content | replace "$__range" "$$__range" }}
-  {{- $content := $content | replace "$__interval" "$$__interval" }}
-  {{- $content := $content | replace "$__name__" "$$__name__" }}
-  {{- tpl $content $ | nindent 2 }}
-  {{- end }} 
+{{ (.Files.Glob "recording-rules/*.yaml").AsConfig | indent 2 }} 
