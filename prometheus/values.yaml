@@ -71,7 +71,7 @@ prometheusOperator:
 # ServiceMonitor 설정 (CRD를 통한 모니터링 대상 설정)mall (스팟)
 serviceMonitorSelector:
   matchLabels:
-    prometheus: kube-prometheus
+    app: prometheus
 
 # 기본 스크레이퍼 설정
 scrapeInterval: 60s

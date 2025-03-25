@@ -12,36 +12,36 @@ spec:
     rules:
     # HTTP 요청 처리율
     - record: app:http_requests:rate5m
-      expr: sum(rate(http_server_requests_seconds_count[5m])) by (namespace, service, status_code)
+      expr: sum(rate(http_requests_total[5m])) by (namespace, service, status)
     
     # HTTP 오류율
     - record: app:http_requests_errors:ratio_rate5m
       expr: |
-        sum(rate(http_server_requests_seconds_count{status_code=~"5.."}[5m])) by (namespace, service)
+        sum(rate(http_requests_total{status=~"5..|4.."}[5m])) by (namespace, service)
         /
-        sum(rate(http_server_requests_seconds_count[5m])) by (namespace, service)
+        sum(rate(http_requests_total[5m])) by (namespace, service)
     
     # HTTP 지연 시간 (응답 시간)
     - record: app:http_requests_latency:p95_rate5m
-      expr: histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (namespace, service, le))
+      expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (namespace, service, le))
     
     - record: app:http_requests_latency:p99_rate5m
-      expr: histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket[5m])) by (namespace, service, le))
+      expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (namespace, service, le))
     
     # API 엔드포인트별 요청 처리율
     - record: app:api_requests:rate5m
-      expr: sum(rate(http_server_requests_seconds_count[5m])) by (namespace, service, uri)
+      expr: sum(rate(http_requests_total[5m])) by (namespace, service, handler)
     
-    # API 엔드포인트별 오류율 (5xx)
+    # API 엔드포인트별 오류율 (5xx, 4xx)
     - record: app:api_requests_errors:ratio_rate5m
       expr: |
-        sum(rate(http_server_requests_seconds_count{status_code=~"5.."}[5m])) by (namespace, service, uri)
+        sum(rate(http_requests_total{status=~"5..|4.."}[5m])) by (namespace, service, handler)
         /
-        sum(rate(http_server_requests_seconds_count[5m])) by (namespace, service, uri)
+        sum(rate(http_requests_total[5m])) by (namespace, service, handler)
     
     # API 엔드포인트별 지연 시간
     - record: app:api_requests_latency:p95_rate5m
-      expr: histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (namespace, service, uri, le))
+      expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (namespace, service, handler, le))
 
   - name: k8s.service.rules
     rules:
