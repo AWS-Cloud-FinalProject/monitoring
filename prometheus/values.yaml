@@ -24,7 +24,7 @@ server:
   
   # 영구 스토리지 설정  
   persistentVolume:
-    enabled: true
+    enabled: false  # PVC 사용 비활성화
     size: 8Gi
     storageClass: "gp2"
   
@@ -86,12 +86,11 @@ prometheus:
       value: "monitoring"
       effect: "NoSchedule"
     
-    # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
+    # 노드 셀렉터 설정 - 모니터링 노드 그룹에 스케줄링
     nodeSelector:
       eks.amazonaws.com/nodegroup: monitoring-node-group
-      eks.amazonaws.com/capacityType: ON_DEMAND
     
-    # 기존 gp2 스토리지 클래스 사용
+    # EBS 볼륨 사용으로 변경 - 영구 데이터 저장
     storageSpec:
       volumeClaimTemplate:
         spec:
