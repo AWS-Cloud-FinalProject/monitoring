@@ -200,14 +200,13 @@ kubeStateMetrics:
 extraFlags:
   - "storage.tsdb.wal-compression"  # WAL 압축 활성화
 
-# 불필요한 컴포넌트 비활성화
-grafana:
-  enabled: false
-  
-  # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
-  nodeSelector:
-    eks.amazonaws.com/nodegroup: monitoring-node-group
+# kube-prometheus-stack 의존성 차트 설정
+kube-prometheus-stack:
+  # 불필요한 컴포넌트 비활성화
+  grafana:
+    enabled: false  # Grafana를 의존성 차트에서 올바르게 비활성화
 
+# 기본 규칙 비활성화
 defaultRules:
   create: false  # 자체 규칙을 사용하므로 기본 규칙 비활성화
 
