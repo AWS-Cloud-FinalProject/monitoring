@@ -1,4 +1,14 @@
-groups:
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubernetes-network-alerts
+  namespace: monitoring
+  labels:
+    app: prometheus
+    role: alert-rules
+    priority: network
+spec:
+  groups:
   - name: kubernetes-network-alerts
     rules:
     # 네트워크 트래픽 알림

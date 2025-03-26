@@ -1,4 +1,14 @@
-groups:
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubernetes-application-alerts
+  namespace: monitoring
+  labels:
+    app: prometheus
+    role: alert-rules
+    priority: application
+spec:
+  groups:
   - name: kubernetes-application-alerts
     rules:
     # API 응답 시간 관련 알림

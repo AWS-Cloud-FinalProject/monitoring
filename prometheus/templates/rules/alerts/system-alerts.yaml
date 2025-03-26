@@ -1,4 +1,14 @@
-groups:
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubernetes-system-alerts
+  namespace: monitoring
+  labels:
+    app: prometheus
+    role: alert-rules
+    priority: system
+spec:
+  groups:
   - name: kubernetes-system-alerts
     rules:
     # 노드 수준 알림
