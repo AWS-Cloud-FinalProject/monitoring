@@ -199,7 +199,7 @@ grafana:
   # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-    
+
   # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
   tolerations:
   - key: "dedicated"
@@ -208,7 +208,7 @@ grafana:
     effect: "NoSchedule"
 
 defaultRules:
-  create: true  # 자체 규칙을 사용하므로 기본 규칙 비활성화
+  create: false  # 자체 규칙을 사용하므로 기본 규칙 비활성화
 
 # 필요한 쿠버네티스 컴포넌트만 활성화
 kubelet:
