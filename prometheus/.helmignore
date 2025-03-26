@@ -2,6 +2,10 @@
 # This supports shell glob matching, relative path matching, and
 # negation (prefixed with !). Only one pattern per line.
 
+# Chart.yaml와 values.yaml은 제외하지 않음
+!Chart.yaml
+!values.yaml
+
 # Common ignores
 .DS_Store
 *.swp
@@ -42,8 +46,6 @@ README.md
 *.json
 *.yml
 *.yaml
-!Chart.yaml
-!values.yaml
 
 # Temporary and build files
 .env
