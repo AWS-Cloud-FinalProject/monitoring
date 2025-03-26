@@ -9,8 +9,8 @@ groups:
         severity: warning
         type: application
       annotations:
-        summary: "API 높은 응답 시간: {{ $labels.namespace }}/{{ $labels.service }}"
-        description: "서비스 {{ $labels.namespace }}/{{ $labels.service }}의 95% API 응답 시간이 1초를 초과합니다. (현재 값: {{ $value }}초)"
+        summary: "API 높은 응답 시간: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}"
+        description: "서비스 {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}의 95% API 응답 시간이 1초를 초과합니다. (현재 값: {{ `{{ $value }}` }}초)"
     
     - alert: APICriticalResponseTime
       expr: app:http_requests_latency:p95_rate5m > 3
@@ -19,8 +19,8 @@ groups:
         severity: critical
         type: application
       annotations:
-        summary: "API 심각한 응답 지연: {{ $labels.namespace }}/{{ $labels.service }}"
-        description: "서비스 {{ $labels.namespace }}/{{ $labels.service }}의 95% API 응답 시간이 3초를 초과합니다. (현재 값: {{ $value }}초)"
+        summary: "API 심각한 응답 지연: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}"
+        description: "서비스 {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}의 95% API 응답 시간이 3초를 초과합니다. (현재 값: {{ `{{ $value }}` }}초)"
     
     # 오류율 관련 알림
     - alert: APIHighErrorRate
@@ -30,8 +30,8 @@ groups:
         severity: warning
         type: application
       annotations:
-        summary: "API 높은 오류율: {{ $labels.namespace }}/{{ $labels.service }}"
-        description: "서비스 {{ $labels.namespace }}/{{ $labels.service }}의 오류율이 5%를 초과합니다. (현재 값: {{ $value | humanizePercentage }})"
+        summary: "API 높은 오류율: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}"
+        description: "서비스 {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}의 오류율이 5%를 초과합니다. (현재 값: {{ `{{ $value | humanizePercentage }}` }})"
     
     - alert: APICriticalErrorRate
       expr: app:http_requests_errors:ratio_rate5m > 0.2
@@ -40,8 +40,8 @@ groups:
         severity: critical
         type: application
       annotations:
-        summary: "API 심각한 오류율: {{ $labels.namespace }}/{{ $labels.service }}"
-        description: "서비스 {{ $labels.namespace }}/{{ $labels.service }}의 오류율이 20%를 초과합니다. (현재 값: {{ $value | humanizePercentage }})"
+        summary: "API 심각한 오류율: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}"
+        description: "서비스 {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}의 오류율이 20%를 초과합니다. (현재 값: {{ `{{ $value | humanizePercentage }}` }})"
     
     # 특정 엔드포인트 관련 알림
     - alert: CriticalAPIEndpointHighErrorRate
@@ -51,8 +51,8 @@ groups:
         severity: critical
         type: application
       annotations:
-        summary: "중요 API 엔드포인트 오류: {{ $labels.namespace }}/{{ $labels.service }} - {{ $labels.uri }}"
-        description: "중요 엔드포인트 {{ $labels.uri }}의 오류율이 1%를 초과합니다. (현재 값: {{ $value | humanizePercentage }})"
+        summary: "중요 API 엔드포인트 오류: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }} - {{ `{{ $labels.uri }}` }}"
+        description: "중요 엔드포인트 {{ `{{ $labels.uri }}` }}의 오류율이 1%를 초과합니다. (현재 값: {{ `{{ $value | humanizePercentage }}` }})"
     
     # 서비스 가용성 관련 알림
     - alert: ServiceUnavailable
@@ -62,8 +62,8 @@ groups:
         severity: critical
         type: application
       annotations:
-        summary: "서비스 가용성 저하: {{ $labels.namespace }}/{{ $labels.service }}"
-        description: "서비스 {{ $labels.namespace }}/{{ $labels.service }}의 가용성이 99% 미만입니다. (현재 값: {{ $value | humanizePercentage }})"
+        summary: "서비스 가용성 저하: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}"
+        description: "서비스 {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}의 가용성이 99% 미만입니다. (현재 값: {{ `{{ $value | humanizePercentage }}` }})"
     
     # 애플리케이션 리소스 사용 관련 알림
     - alert: PodCPUUsageHigh
@@ -73,8 +73,8 @@ groups:
         severity: warning
         type: application
       annotations:
-        summary: "Pod CPU 사용량 높음: {{ $labels.namespace }}/{{ $labels.pod }}"
-        description: "Pod {{ $labels.namespace }}/{{ $labels.pod }}의 CPU 사용량이 15분 이상 80%를 초과했습니다. (현재 값: {{ $value }}%)"
+        summary: "Pod CPU 사용량 높음: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.pod }}` }}"
+        description: "Pod {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.pod }}` }}의 CPU 사용량이 15분 이상 80%를 초과했습니다. (현재 값: {{ `{{ $value }}` }}%)"
     
     - alert: PodMemoryUsageHigh
       expr: pod:memory_utilization:percent > 80
@@ -83,8 +83,8 @@ groups:
         severity: warning
         type: application
       annotations:
-        summary: "Pod 메모리 사용량 높음: {{ $labels.namespace }}/{{ $labels.pod }}"
-        description: "Pod {{ $labels.namespace }}/{{ $labels.pod }}의 메모리 사용량이 15분 이상 80%를 초과했습니다. (현재 값: {{ $value }}%)"
+        summary: "Pod 메모리 사용량 높음: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.pod }}` }}"
+        description: "Pod {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.pod }}` }}의 메모리 사용량이 15분 이상 80%를 초과했습니다. (현재 값: {{ `{{ $value }}` }}%)"
     
     # 트래픽 관련 알림
     - alert: HighTrafficSpike
@@ -94,5 +94,5 @@ groups:
         severity: warning
         type: application
       annotations:
-        summary: "트래픽 급증: {{ $labels.namespace }}/{{ $labels.service }}"
-        description: "서비스 {{ $labels.namespace }}/{{ $labels.service }}의 트래픽이 평소보다 2배 이상 급증했습니다."
+        summary: "트래픽 급증: {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}"
+        description: "서비스 {{ `{{ $labels.namespace }}` }}/{{ `{{ $labels.service }}` }}의 트래픽이 평소보다 2배 이상 급증했습니다."
