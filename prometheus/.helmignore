@@ -39,8 +39,6 @@ README.md
 *.log
 *.txt
 *.json
-*.yml
-*.yaml
 
 # Temporary and build files
 .env
