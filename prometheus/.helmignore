@@ -2,10 +2,6 @@
 # This supports shell glob matching, relative path matching, and
 # negation (prefixed with !). Only one pattern per line.
 
-# Chart.yaml와 values.yaml은 제외하지 않음
-!Chart.yaml
-!values.yaml
-
 # Common ignores
 .DS_Store
 *.swp
@@ -22,7 +18,6 @@
 templates/rules/alerts/application-alerts.yaml
 templates/rules/alerts/network-alerts.yaml
 templates/rules/alerts/system-alerts.yaml
-templates/rules/alerts/critical-alerts.yaml
 templates/rules/recording-rules/application-recording-rules.yaml
 templates/rules/recording-rules/system-recording-rules.yaml
 
