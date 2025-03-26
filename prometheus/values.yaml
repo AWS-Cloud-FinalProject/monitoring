@@ -77,10 +77,20 @@ prometheus:
     externalLabels:
       cluster: production
       environment: eks
+      
+    # 스토리지 설정 (인라인에서 가져온 설정)
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp2
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
 
 # 알림 설정
 alertmanager:
-  enabled: true
+  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
   # AlertManager 상세 설정
   alertmanagerSpec:
     # Replica 설정 (고가용성)
@@ -143,14 +153,14 @@ evaluationInterval: 120s
 
 # 노드 익스포터 설정
 nodeExporter:
-  enabled: true
+  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
   # 노드 익스포터는 모든 노드에 배포해야 하므로 nodeSelector 없음
   tolerations:
   - operator: "Exists"  # 모든 노드에 배포 가능하도록 설정
 
 # kube-state-metrics 설정
 kubeStateMetrics:
-  enabled: true
+  enabled: false
   # Replica 설정
   replicas: 2
   
@@ -177,10 +187,10 @@ defaultRules:
 
 # 필요한 쿠버네티스 컴포넌트만 활성화
 kubelet:
-  enabled: true  # 노드 메트릭은 중요하므로 활성화 유지
+  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
 
 coreDns:
-  enabled: true  # DNS 메트릭은 중요하므로 활성화 유지
+  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
 
 # 불필요한 컴포넌트 비활성화
 kubeApiServer:

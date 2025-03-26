@@ -12,19 +12,17 @@ spec:
     targetRevision: 45.7.1
     # GitHub 레포지토리의 파일 참조 설정
     helm:
+      # CRD는 이미 설치되어 있으므로 건너뜁니다
+      skipCrds: true
+      
       # GitHub 저장소의 values.yaml 파일 참조
       valueFiles:
         - https://raw.githubusercontent.com/AWS-Cloud-FinalProject/monitoring/develop/prometheus/values.yaml
       
-      # 필요한 경우에만 일부 값을 오버라이드
+      # 최소한의 인라인 설정만 유지
       values: |
-        # PrometheusRules 설정 - 커스텀 알림 및 기록 규칙 파일 선택
-        prometheus:
-          prometheusSpec:
-            ruleSelector:
-              matchLabels:
-                app: prometheus
-                role: alert-rules
+        # 리소스 이름 단순화 설정
+        fullnameOverride: prometheus
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -33,4 +31,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true 
+    - CreateNamespace=true
