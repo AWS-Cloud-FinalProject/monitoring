@@ -1,25 +1,18 @@
 # Prometheus 서버 기본 설정
 server:
   retention: 2d  # 데이터 보존 기간 2일
-  # 리소스 요청 및 제한
+  # 리소스 요청 및 제한 - 더 적은 리소스로 최적화
   resources:
     requests:
-      cpu: 300m
-      memory: 1Gi
+      cpu: 200m
+      memory: 512Mi
     limits:
-      cpu: 600m
-      memory: 2Gi
+      cpu: 500m
+      memory: 1Gi
   
   # 노드 셀렉터 설정 - 전용 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-  
-  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
-  tolerations:
-  - key: "dedicated"
-    operator: "Equal"
-    value: "monitoring"
-    effect: "NoSchedule"
   
   # 영구 스토리지 설정  
   persistentVolume:
@@ -44,6 +37,15 @@ prometheus:
     # Replica 설정 (고가용성)
     replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
     
+    # 리소스 요청 최적화
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    
     # PrometheusRule 선택자 설정 (중요: 알림 및 레코딩 규칙 연결)
     ruleSelector:
       matchExpressions:
@@ -61,30 +63,20 @@ prometheus:
     updateStrategy:
       type: RollingUpdate
     
-    # 파드 중단 예산 (PDB)
+    # 파드 중단 예산 (PDB) - 비활성화하여 스케줄링 유연성 향상
     podDisruptionBudget:
-      enabled: true
-      minAvailable: 1
+      enabled: false
     
     # ServiceMonitor 선택자 설정
     serviceMonitorSelector:
       matchLabels:
         app: prometheus
     
-    # 리소스 설정은 server 섹션에서 상속됨
-    
     # 외부 라벨 설정
     externalLabels:
       cluster: production
       environment: eks
       
-    # 모니터링 노드에 스케줄링하기 위한 톨러레이션
-    tolerations:
-    - key: "dedicated"
-      operator: "Equal"
-      value: "monitoring"
-      effect: "NoSchedule"
-    
     # 노드 셀렉터 설정 - 모니터링 노드 그룹에 스케줄링
     nodeSelector:
       eks.amazonaws.com/nodegroup: monitoring-node-group
@@ -107,6 +99,19 @@ alertmanager:
     # Replica 설정
     replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
     
+    # 리소스 요청 최적화
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+    
+    # PDB 비활성화
+    podDisruptionBudget:
+      enabled: false
+    
     # Pod 업데이트 전략
     updateStrategy:
       type: RollingUpdate
@@ -122,13 +127,6 @@ alertmanager:
   # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-  
-  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
-  tolerations:
-  - key: "dedicated"
-    operator: "Equal"
-    value: "monitoring"
-    effect: "NoSchedule"
   
   # 알림 라우팅 설정
   config:
@@ -149,16 +147,18 @@ alertmanager:
 prometheusOperator:
   enabled: true
   
+  # 리소스 요청 최적화
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+  
   # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-  
-  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
-  tolerations:
-  - key: "dedicated"
-    operator: "Equal"
-    value: "monitoring"
-    effect: "NoSchedule"
 
 # 기본 스크레이퍼 설정
 scrapeInterval: 120s
@@ -167,26 +167,33 @@ evaluationInterval: 120s
 # 노드 익스포터 설정
 nodeExporter:
   enabled: true
-  # 모든 노드에 배포해야 하므로 모든 태인트를 허용
-  tolerations:
-  - operator: "Exists"
+  # 리소스 요청 최적화
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 
 # kube-state-metrics 설정
 kubeStateMetrics:
-  enabled: true
+  enabled: true  # 활성화 (필수 컴포넌트)
   # Replica 설정
   replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
+  
+  # 리소스 요청 최적화
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   
   # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-  
-  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
-  tolerations:
-  - key: "dedicated"
-    operator: "Equal"
-    value: "monitoring"
-    effect: "NoSchedule"
 
 # 최적화 설정
 extraFlags:
@@ -199,13 +206,6 @@ grafana:
   # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-
-  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
-  tolerations:
-  - key: "dedicated"
-    operator: "Equal"
-    value: "monitoring"
-    effect: "NoSchedule"
 
 defaultRules:
   create: false  # 자체 규칙을 사용하므로 기본 규칙 비활성화
