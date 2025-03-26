@@ -1,22 +1,22 @@
 # Prometheus 서버 기본 설정
 server:
-  retention: 2d  # 데이터 보존 기간 2일
-  # 리소스 요청 및 제한 - 더 적은 리소스로 최적화
+  retention: 1d  # 데이터 보존 기간 1일로 줄임
+  # 리소스 요청 더 최적화
   resources:
     requests:
-      cpu: 200m
-      memory: 512Mi
+      cpu: 100m
+      memory: 256Mi
     limits:
-      cpu: 500m
-      memory: 1Gi
+      cpu: 300m
+      memory: 512Mi
   
-  # 노드 셀렉터 설정 - 전용 모니터링 노드에 스케줄링
+  # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
   
-  # 영구 스토리지 설정  
+  # 영구 스토리지 사용 (EBS)
   persistentVolume:
-    enabled: true  # PVC 사용 활성화
+    enabled: true  # PVC 활성화
     size: 8Gi
     storageClass: "gp3"  # AWS EBS CSI 드라이버 사용
   
@@ -34,17 +34,17 @@ serviceDiscovery:
 # Prometheus 서버 상세 설정
 prometheus:
   prometheusSpec:
-    # Replica 설정 (고가용성)
-    replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
+    # Replica 설정 - 하나만 사용
+    replicas: 1
     
-    # 리소스 요청 최적화
+    # 리소스 요청 더 최적화
     resources:
       requests:
-        cpu: 200m
-        memory: 512Mi
+        cpu: 100m
+        memory: 256Mi
       limits:
-        cpu: 500m
-        memory: 1Gi
+        cpu: 300m
+        memory: 512Mi
     
     # PrometheusRule 선택자 설정 (중요: 알림 및 레코딩 규칙 연결)
     ruleSelector:
@@ -63,7 +63,7 @@ prometheus:
     updateStrategy:
       type: RollingUpdate
     
-    # 파드 중단 예산 (PDB) - 비활성화하여 스케줄링 유연성 향상
+    # 파드 중단 예산 (PDB) - 비활성화
     podDisruptionBudget:
       enabled: false
     
@@ -89,7 +89,7 @@ prometheus:
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 10Gi
+              storage: 8Gi
 
 # 알림 설정
 alertmanager:
@@ -97,16 +97,16 @@ alertmanager:
   # AlertManager 상세 설정
   alertmanagerSpec:
     # Replica 설정
-    replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
+    replicas: 1
     
-    # 리소스 요청 최적화
+    # 리소스 요청 더 최적화
     resources:
       requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
         cpu: 50m
         memory: 128Mi
-      limits:
-        cpu: 100m
-        memory: 256Mi
     
     # PDB 비활성화
     podDisruptionBudget:
@@ -119,12 +119,13 @@ alertmanager:
     # 트래픽 라우팅
     routePrefix: /alertmanager
   
+  # 영구 스토리지 설정 (EBS)
   persistence:
     enabled: true
-    size: 5Gi
+    size: 2Gi
     storageClass: "gp3"  # AWS EBS CSI 드라이버 사용
-
-  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
+  
+  # 노드 셀렉터 설정 - 모니터링 노드 그룹에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
   
@@ -147,49 +148,49 @@ alertmanager:
 prometheusOperator:
   enabled: true
   
-  # 리소스 요청 최적화
+  # 리소스 요청 더 최적화
   resources:
     requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
       cpu: 50m
       memory: 128Mi
-    limits:
-      cpu: 100m
-      memory: 256Mi
   
   # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
 
-# 기본 스크레이퍼 설정
-scrapeInterval: 120s
-evaluationInterval: 120s
+# 기본 스크레이퍼 설정 - 간격 증가로 부하 감소
+scrapeInterval: 300s
+evaluationInterval: 300s
 
 # 노드 익스포터 설정
 nodeExporter:
   enabled: true
-  # 리소스 요청 최적화
+  # 리소스 요청 더 최적화
   resources:
     requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
       cpu: 50m
       memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
 
 # kube-state-metrics 설정
 kubeStateMetrics:
-  enabled: true  # 활성화 (필수 컴포넌트)
+  enabled: true
   # Replica 설정
-  replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
+  replicas: 1
   
-  # 리소스 요청 최적화
+  # 리소스 요청 더 최적화
   resources:
     requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
       cpu: 50m
       memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
   
   # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
@@ -220,19 +221,19 @@ coreDns:
 
 # 불필요한 컴포넌트는 비활성화 상태 유지
 kubeApiServer:
-  enabled: false  # 필요시 활성화
+  enabled: false
 
 kubeDns:
-  enabled: false  # CoreDNS 사용시 비활성화
+  enabled: false
 
 kubeControllerManager:
-  enabled: false  # 필요시 활성화
+  enabled: false
 
 kubeEtcd:
-  enabled: false  # 필요시 활성화
+  enabled: false
 
 kubeScheduler:
-  enabled: false  # 필요시 활성화
+  enabled: false
 
 kubeProxy:
-  enabled: false  # 필요시 활성화 
+  enabled: false 
