@@ -10,11 +10,12 @@ server:
       cpu: 600m
       memory: 2Gi
   
-  # 모니터링 노드 그룹 설정
+  # 모니터링 노드 그룹 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     role: monitoring
     node-type: on-demand
   
+  # 톨러레이션 설정
   tolerations:
   - key: "dedicated"
     operator: "Equal"
@@ -78,7 +79,7 @@ prometheus:
       cluster: production
       environment: eks
       
-    # 스토리지 설정 (인라인에서 가져온 설정)
+    # 스토리지 설정 (EBS를 사용한 영구 스토리지)
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -87,6 +88,18 @@ prometheus:
           resources:
             requests:
               storage: 10Gi
+    
+    # 모니터링 노드 그룹에 스케줄링
+    nodeSelector:
+      role: monitoring
+      node-type: on-demand
+    
+    # 톨러레이션 설정
+    tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "monitoring"
+      effect: "NoSchedule"
 
 # 알림 설정
 alertmanager:
@@ -112,6 +125,7 @@ alertmanager:
     role: monitoring
     node-type: on-demand
   
+  # 톨러레이션 설정
   tolerations:
   - key: "dedicated"
     operator: "Equal"
@@ -141,6 +155,7 @@ prometheusOperator:
     role: monitoring
     node-type: on-demand
   
+  # 톨러레이션 설정
   tolerations:
   - key: "dedicated"
     operator: "Equal"
@@ -160,14 +175,16 @@ nodeExporter:
 
 # kube-state-metrics 설정
 kubeStateMetrics:
-  enabled: false
+  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
   # Replica 설정
   replicas: 2
   
+  # kube-state-metrics도 모니터링 노드에 배치
   nodeSelector:
     role: monitoring
     node-type: on-demand
   
+  # 톨러레이션 설정
   tolerations:
   - key: "dedicated"
     operator: "Equal"
