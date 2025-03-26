@@ -199,7 +199,7 @@ grafana:
   # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-  
+    
   # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
   tolerations:
   - key: "dedicated"

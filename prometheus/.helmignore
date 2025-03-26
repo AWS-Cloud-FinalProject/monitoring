@@ -7,6 +7,11 @@
 *.swp
 *.tmp
 *~
+.git
+.gitignore
+.github/
+.idea/
+.vscode/
 
 # Specific files to ignore for Prometheus alerts and recording rules
 # This prevents Helm from processing the templates that contain Prometheus expressions
@@ -15,4 +20,35 @@ templates/rules/alerts/network-alerts.yaml
 templates/rules/alerts/system-alerts.yaml
 templates/rules/alerts/critical-alerts.yaml
 templates/rules/recording-rules/application-recording-rules.yaml
-templates/rules/recording-rules/system-recording-rules.yaml 
+templates/rules/recording-rules/system-recording-rules.yaml
+
+# Other project components - not related to Prometheus
+argocd/
+fluent-bit/
+node-exporter/
+cloudwatch/
+grafana/
+loki/
+docs/
+README.md
+*.md
+*.log
+*.txt
+*.json
+*.yml
+*.yaml
+!Chart.yaml
+!values.yaml
+
+# Temporary and build files
+.env
+*.bak
+*.orig
+*.rej
+*.tgz
+.helmignore
+
+# CI/CD and testing files
+scripts/
+tests/
+ci/ 
