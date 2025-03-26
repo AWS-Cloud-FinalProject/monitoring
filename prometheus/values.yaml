@@ -10,12 +10,11 @@ server:
       cpu: 600m
       memory: 2Gi
   
-  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
+  # 노드 셀렉터 설정 - 전용 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-    eks.amazonaws.com/capacityType: ON_DEMAND
   
-  # 톨러레이션 설정
+  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
   tolerations:
   - key: "dedicated"
     operator: "Equal"
@@ -24,9 +23,9 @@ server:
   
   # 영구 스토리지 설정  
   persistentVolume:
-    enabled: false  # PVC 사용 비활성화
+    enabled: true  # PVC 사용 활성화
     size: 8Gi
-    storageClass: "gp2"
+    storageClass: "gp3"  # AWS EBS CSI 드라이버 사용
   
   # 보안 설정
   securityContext:
@@ -43,7 +42,7 @@ serviceDiscovery:
 prometheus:
   prometheusSpec:
     # Replica 설정 (고가용성)
-    replicas: 2
+    replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
     
     # PrometheusRule 선택자 설정 (중요: 알림 및 레코딩 규칙 연결)
     ruleSelector:
@@ -90,7 +89,7 @@ prometheus:
     nodeSelector:
       eks.amazonaws.com/nodegroup: monitoring-node-group
     
-    # EBS 볼륨 사용으로 변경 - 영구 데이터 저장
+    # EBS 볼륨 사용 - 영구 데이터 저장
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -102,11 +101,11 @@ prometheus:
 
 # 알림 설정
 alertmanager:
-  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
+  enabled: true
   # AlertManager 상세 설정
   alertmanagerSpec:
-    # Replica 설정 (고가용성)
-    replicas: 2
+    # Replica 설정
+    replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
     
     # Pod 업데이트 전략
     updateStrategy:
@@ -118,13 +117,13 @@ alertmanager:
   persistence:
     enabled: true
     size: 5Gi
+    storageClass: "gp3"  # AWS EBS CSI 드라이버 사용
 
   # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-    eks.amazonaws.com/capacityType: ON_DEMAND
   
-  # 톨러레이션 설정
+  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
   tolerations:
   - key: "dedicated"
     operator: "Equal"
@@ -149,12 +148,12 @@ alertmanager:
 # Prometheus Operator 설정
 prometheusOperator:
   enabled: true
-  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
+  
+  # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-    eks.amazonaws.com/capacityType: ON_DEMAND
   
-  # 톨러레이션 설정
+  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
   tolerations:
   - key: "dedicated"
     operator: "Equal"
@@ -167,23 +166,22 @@ evaluationInterval: 120s
 
 # 노드 익스포터 설정
 nodeExporter:
-  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
-  # 노드 익스포터는 모든 노드에 배포해야 하므로 nodeSelector 없음
+  enabled: true
+  # 모든 노드에 배포해야 하므로 모든 태인트를 허용
   tolerations:
-  - operator: "Exists"  # 모든 노드에 배포 가능하도록 설정
+  - operator: "Exists"
 
 # kube-state-metrics 설정
 kubeStateMetrics:
-  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
+  enabled: true
   # Replica 설정
-  replicas: 2
+  replicas: 1  # 일단 1개로 시작하고 안정화 후 증가
   
-  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
+  # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
-    eks.amazonaws.com/capacityType: ON_DEMAND
   
-  # 톨러레이션 설정
+  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
   tolerations:
   - key: "dedicated"
     operator: "Equal"
@@ -196,33 +194,45 @@ extraFlags:
 
 # 불필요한 컴포넌트 비활성화
 grafana:
-  enabled: false  # Grafana가 별도로 배포되어 있다면 비활성화
+  enabled: false
+  
+  # 노드 셀렉터 설정 - 모니터링 노드에 스케줄링
+  nodeSelector:
+    eks.amazonaws.com/nodegroup: monitoring-node-group
+  
+  # 톨러레이션 설정 - dedicated=monitoring 태인트를 허용
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoSchedule"
 
 defaultRules:
   create: true  # 자체 규칙을 사용하므로 기본 규칙 비활성화
 
 # 필요한 쿠버네티스 컴포넌트만 활성화
 kubelet:
-  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
+  enabled: true
 
+# CoreDNS 활성화
 coreDns:
-  enabled: false  # Prometheus만 먼저 구현하기 위해 비활성화
+  enabled: true
 
-# 불필요한 컴포넌트 비활성화
+# 불필요한 컴포넌트는 비활성화 상태 유지
 kubeApiServer:
-  enabled: false  # API 서버 메트릭이 필요없다면 비활성화
+  enabled: false  # 필요시 활성화
 
 kubeDns:
-  enabled: false  # coreDns를 사용한다면 비활성화
+  enabled: false  # CoreDNS 사용시 비활성화
 
 kubeControllerManager:
-  enabled: false  # 필요없다면 비활성화
+  enabled: false  # 필요시 활성화
 
 kubeEtcd:
-  enabled: false  # 필요없다면 비활성화
+  enabled: false  # 필요시 활성화
 
 kubeScheduler:
-  enabled: false  # 필요없다면 비활성화
+  enabled: false  # 필요시 활성화
 
 kubeProxy:
-  enabled: false  # 필요없다면 비활성화 
+  enabled: false  # 필요시 활성화 
