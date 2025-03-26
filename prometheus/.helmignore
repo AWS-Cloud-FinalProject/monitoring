@@ -2,16 +2,6 @@
 # This supports shell glob matching, relative path matching, and
 # negation (prefixed with !). Only one pattern per line.
 
-# Common ignores
-.DS_Store
-*.swp
-*.tmp
-*~
-.git
-.gitignore
-.github/
-.idea/
-.vscode/
 
 # Specific files to ignore for Prometheus alerts and recording rules
 # This prevents Helm from processing the templates that contain Prometheus expressions
@@ -23,32 +13,3 @@ templates/rules/recording-rules/system-recording-rules.yaml
 
 # CRD files - already handled by ArgoCD's skipCrds option
 crds/
-*-crd.yaml
-*/crds/
-
-# Other project components - not related to Prometheus
-argocd/
-fluent-bit/
-node-exporter/
-cloudwatch/
-grafana/
-loki/
-docs/
-README.md
-*.md
-*.log
-*.txt
-*.json
-
-# Temporary and build files
-.env
-*.bak
-*.orig
-*.rej
-*.tgz
-.helmignore
-
-# CI/CD and testing files
-scripts/
-tests/
-ci/ 
