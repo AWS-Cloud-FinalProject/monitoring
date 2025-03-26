@@ -10,10 +10,10 @@ server:
       cpu: 600m
       memory: 2Gi
   
-  # 모니터링 노드 그룹 설정 - 모니터링 노드에 스케줄링
+  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
   nodeSelector:
-    role: monitoring
-    node-type: on-demand
+    eks.amazonaws.com/nodegroup: monitoring-node-group
+    eks.amazonaws.com/capacityType: ON_DEMAND
   
   # 톨러레이션 설정
   tolerations:
@@ -79,7 +79,19 @@ prometheus:
       cluster: production
       environment: eks
       
-    # 스토리지 설정 (EBS를 사용한 영구 스토리지)
+    # 모니터링 노드에 스케줄링하기 위한 톨러레이션
+    tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "monitoring"
+      effect: "NoSchedule"
+    
+    # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
+    nodeSelector:
+      eks.amazonaws.com/nodegroup: monitoring-node-group
+      eks.amazonaws.com/capacityType: ON_DEMAND
+    
+    # 기존 gp2 스토리지 클래스 사용
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -88,18 +100,6 @@ prometheus:
           resources:
             requests:
               storage: 10Gi
-    
-    # 모니터링 노드 그룹에 스케줄링
-    nodeSelector:
-      role: monitoring
-      node-type: on-demand
-    
-    # 톨러레이션 설정
-    tolerations:
-    - key: "dedicated"
-      operator: "Equal"
-      value: "monitoring"
-      effect: "NoSchedule"
 
 # 알림 설정
 alertmanager:
@@ -120,10 +120,10 @@ alertmanager:
     enabled: true
     size: 5Gi
 
-  # 알림 매니저도 모니터링 노드에 배치
+  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
   nodeSelector:
-    role: monitoring
-    node-type: on-demand
+    eks.amazonaws.com/nodegroup: monitoring-node-group
+    eks.amazonaws.com/capacityType: ON_DEMAND
   
   # 톨러레이션 설정
   tolerations:
@@ -150,10 +150,10 @@ alertmanager:
 # Prometheus Operator 설정
 prometheusOperator:
   enabled: true
-  # 오퍼레이터도 모니터링 노드에 배치
+  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
   nodeSelector:
-    role: monitoring
-    node-type: on-demand
+    eks.amazonaws.com/nodegroup: monitoring-node-group
+    eks.amazonaws.com/capacityType: ON_DEMAND
   
   # 톨러레이션 설정
   tolerations:
@@ -179,10 +179,10 @@ kubeStateMetrics:
   # Replica 설정
   replicas: 2
   
-  # kube-state-metrics도 모니터링 노드에 배치
+  # 노드 셀렉터 수정 - 실제 노드 레이블과 일치시킴
   nodeSelector:
-    role: monitoring
-    node-type: on-demand
+    eks.amazonaws.com/nodegroup: monitoring-node-group
+    eks.amazonaws.com/capacityType: ON_DEMAND
   
   # 톨러레이션 설정
   tolerations:
