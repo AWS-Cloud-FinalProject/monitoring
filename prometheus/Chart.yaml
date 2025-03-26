@@ -1,6 +1,0 @@
-apiVersion: v2
-name: prometheus-monitoring
-description: 커스텀 Prometheus 모니터링 스택
-type: application
-version: 0.1.0
-appVersion: "1.0.0" 

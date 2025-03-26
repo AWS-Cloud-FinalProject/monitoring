@@ -6,11 +6,25 @@ metadata:
 spec:
   project: default
   source:
-    # GitHub 레포지토리 내 커스텀 Helm 차트 사용
-    repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring.git
-    targetRevision: develop
-    path: prometheus
-    # GitHub 레포지토리 내에 있는 Helm 차트이므로 helm.values 섹션은 제거
+    # 공식 Helm 차트 사용
+    chart: kube-prometheus-stack
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 45.7.1
+    # GitHub 레포지토리의 파일 참조 설정
+    helm:
+      # GitHub 저장소의 values.yaml 파일 참조
+      valueFiles:
+        - https://raw.githubusercontent.com/AWS-Cloud-FinalProject/monitoring/develop/prometheus/values.yaml
+      
+      # 필요한 경우에만 일부 값을 오버라이드
+      values: |
+        # PrometheusRules 설정 - 커스텀 알림 및 기록 규칙 파일 선택
+        prometheus:
+          prometheusSpec:
+            ruleSelector:
+              matchLabels:
+                app: prometheus
+                role: alert-rules
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
