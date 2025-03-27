@@ -23,33 +23,34 @@ serviceDiscovery:
 #---------------------------------
 # 2. 기본 규칙 설정 (비활성화)
 #---------------------------------
-defaultRules:
-  create: false  # 모든 기본 규칙 비활성화
-  rules:
-    alertmanager: false
-    etcd: false
-    general: false
-    k8s: false
-    kubeApiserver: false
-    kubeApiserverAvailability: false
-    kubeApiserverError: false
-    kubeApiserverSlos: false
-    kubelet: false
-    kubePrometheusGeneral: false
-    kubePrometheusNodeAlerting: false
-    kubePrometheusNodeRecording: false
-    kubernetesAbsent: false
-    kubernetesApps: false
-    kubernetesResources: false
-    kubernetesStorage: false
-    kubernetesSystem: false
-    kubeScheduler: false
-    kubeStateMetrics: false
-    network: false
-    node: false
-    prometheus: false
-    prometheusOperator: false
-    time: false
+kube-prometheus-stack:
+  defaultRules:
+    create: false
+    rules:
+      alertmanager: false
+      etcd: false
+      general: false
+      k8s: false
+      kubeApiserver: false
+      kubeApiserverAvailability: false
+      kubeApiserverError: false
+      kubeApiserverSlos: false
+      kubelet: false
+      kubePrometheusGeneral: false
+      kubePrometheusNodeAlerting: false
+      kubePrometheusNodeRecording: false
+      kubernetesAbsent: false
+      kubernetesApps: false
+      kubernetesResources: false
+      kubernetesStorage: false
+      kubernetesSystem: false
+      kubeScheduler: false
+      kubeStateMetrics: false
+      network: false
+      node: false
+      prometheus: false
+      prometheusOperator: false
+      time: false
 
 #---------------------------------
 # 3. 활성화된 컴포넌트 설정
