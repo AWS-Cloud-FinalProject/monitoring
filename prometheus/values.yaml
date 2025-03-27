@@ -6,6 +6,7 @@
 #---------------------------------
 # 리소스 이름 단순화
 fullnameOverride: prometheus
+nameOverride: prometheus
 
 # 기본 스크레이핑 및 평가 설정
 scrapeInterval: 300s      # 메트릭 수집 간격
@@ -72,6 +73,10 @@ prometheusOperator:
       memory: 128Mi
   nodeSelector:
     eks.amazonaws.com/nodegroup: monitoring-node-group
+  admissionWebhooks:
+    enabled: true
+    patch:
+      enabled: true
 
 #---------------------------------
 # 4. 비활성화된 컴포넌트 설정
@@ -79,6 +84,20 @@ prometheusOperator:
 # Grafana (비활성화 - 별도 설치 예정)
 grafana:
   enabled: false
+  service:
+    enabled: false
+    port: 0
+    targetPort: 0
+  serviceMonitor:
+    enabled: false
+  sidecar:
+    dashboards:
+      enabled: false
+    datasources:
+      enabled: false
+  forceDeployDashboards: false
+  forceDeployDatasources: false
+  defaultDashboardsEnabled: false
 
 # Kube API Server (비활성화 - EKS 관리)
 kubeApiServer:
@@ -89,6 +108,9 @@ kubeApiServer:
     targetPort: 0
   serviceMonitor:
     enabled: false
+    # 서비스 모니터 라벨 추가
+    additionalLabels:
+      k8s-app: "disabled"
 
 # Kube DNS (비활성화)
 kubeDns:
@@ -99,6 +121,9 @@ kubeDns:
     targetPort: 0
   serviceMonitor:
     enabled: false
+    # 서비스 모니터 라벨 추가
+    additionalLabels:
+      k8s-app: "disabled"
 
 # Kube Controller Manager (비활성화 - EKS 관리)
 kubeControllerManager:
@@ -109,6 +134,9 @@ kubeControllerManager:
     targetPort: 0
   serviceMonitor:
     enabled: false
+    # 서비스 모니터 라벨 추가
+    additionalLabels:
+      k8s-app: "disabled"
 
 # Kube Scheduler (비활성화 - EKS 관리)
 kubeScheduler:
@@ -119,6 +147,9 @@ kubeScheduler:
     targetPort: 0
   serviceMonitor:
     enabled: false
+    # 서비스 모니터 라벨 추가
+    additionalLabels:
+      k8s-app: "disabled"
 
 # Kube ETCD (비활성화 - EKS 관리)
 kubeEtcd:
@@ -129,6 +160,9 @@ kubeEtcd:
     targetPort: 0
   serviceMonitor:
     enabled: false
+    # 서비스 모니터 라벨 추가
+    additionalLabels:
+      k8s-app: "disabled"
 
 # Kube Proxy (비활성화 - 불필요)
 kubeProxy:
@@ -139,6 +173,9 @@ kubeProxy:
     targetPort: 0
   serviceMonitor:
     enabled: false
+    # 서비스 모니터 라벨 추가
+    additionalLabels:
+      k8s-app: "disabled"
 
 #---------------------------------
 # 5. Prometheus 서버 설정
@@ -194,6 +231,10 @@ prometheus:
     serviceMonitorSelector:
       matchLabels:
         app: prometheus
+    # 서비스 모니터 네임스페이스 선택자 설정 - 모니터링 네임스페이스로 제한
+    serviceMonitorNamespaceSelector:
+      matchNames:
+        - monitoring
     externalLabels:
       cluster: production
       environment: eks
