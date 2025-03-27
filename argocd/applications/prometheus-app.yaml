@@ -15,15 +15,15 @@ spec:
       # CRD는 이미 설치되어 있으므로 건너뜁니다
       skipCrds: true
       
-      # values.yaml을 상대 경로로 참조 (차트 내 파일)
+      # values.yaml을 참조
       valueFiles:
         - values.yaml
       
-      # 인라인 values로 기본 규칙 비활성화를 명시적으로 설정
+      # 최소한의 인라인 설정만 유지
       values: |
         # 리소스 이름 단순화 설정
         fullnameOverride: prometheus
-        
+  
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
