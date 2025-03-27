@@ -19,10 +19,40 @@ spec:
       valueFiles:
         - values.yaml
       
-      # 최소한의 인라인 설정만 유지
+      # 인라인 values로 기본 규칙 비활성화를 명시적으로 설정
       values: |
         # 리소스 이름 단순화 설정
         fullnameOverride: prometheus
+        
+        # 기본 규칙 명시적으로 비활성화
+        kube-prometheus-stack:
+          defaultRules:
+            create: false
+            rules:
+              alertmanager: false
+              etcd: false
+              general: false
+              k8s: false
+              kubeApiserver: false
+              kubeApiserverAvailability: false
+              kubeApiserverError: false
+              kubeApiserverSlos: false
+              kubelet: false
+              kubePrometheusGeneral: false
+              kubePrometheusNodeAlerting: false
+              kubePrometheusNodeRecording: false
+              kubernetesAbsent: false
+              kubernetesApps: false
+              kubernetesResources: false
+              kubernetesStorage: false
+              kubernetesSystem: false
+              kubeScheduler: false
+              kubeStateMetrics: false
+              network: false
+              node: false
+              prometheus: false
+              prometheusOperator: false
+              time: false
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
