@@ -39,6 +39,34 @@ coreDns:
 # Node Exporter (활성화)
 nodeExporter:
   enabled: true
+  # Node Exporter의 자세한 설정
+  hostRootfs: true
+  hostNetwork: true
+  hostPID: true
+  image:
+    repository: quay.io/prometheus/node-exporter
+    tag: v1.5.0
+  extraArgs:
+    - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
+    - --collector.netdev
+    - --collector.netstat
+    - --collector.meminfo
+    - --collector.cpu
+    - --collector.diskstats
+    - --collector.filesystem
+    - --collector.loadavg
+  service:
+    port: 9100
+    targetPort: 9100
+    type: ClusterIP
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        targetLabel: node
+        action: replace
   resources:
     requests:
       cpu: 25m
@@ -46,6 +74,8 @@ nodeExporter:
     limits:
       cpu: 50m
       memory: 64Mi
+  tolerations:
+    - operator: "Exists"
 
 # Kube State Metrics (활성화)
 kubeStateMetrics:
