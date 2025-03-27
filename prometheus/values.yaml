@@ -206,10 +206,6 @@ kube-prometheus-stack:
   grafana:
     enabled: false  # Grafana를 의존성 차트에서 올바르게 비활성화
 
-# 기본 규칙 비활성화
-defaultRules:
-  create: false  # 자체 규칙을 사용하므로 기본 규칙 비활성화
-
 # 필요한 쿠버네티스 컴포넌트만 활성화
 kubelet:
   enabled: true
@@ -225,14 +221,45 @@ kubeApiServer:
 kubeDns:
   enabled: false
 
+# 관리형 EKS에서 접근할 수 없는 컴포넌트 비활성화
 kubeControllerManager:
-  enabled: false
-
-kubeEtcd:
   enabled: false
 
 kubeScheduler:
   enabled: false
 
+kubeEtcd:
+  enabled: false
+
+# 대부분의 경우 필요하지 않음
 kubeProxy:
-  enabled: false 
+  enabled: false
+
+# 기본 규칙 비활성화 (필요한 경우)
+defaultRules:
+  create: false
+  rules:
+    alertmanager: false
+    etcd: false
+    general: false
+    k8s: false
+    kubeApiserver: false
+    kubeApiserverAvailability: false
+    kubeApiserverError: false
+    kubeApiserverSlos: false
+    kubelet: false
+    kubePrometheusGeneral: false
+    kubePrometheusNodeAlerting: false
+    kubePrometheusNodeRecording: false
+    kubernetesAbsent: false
+    kubernetesApps: false
+    kubernetesResources: false
+    kubernetesStorage: false
+    kubernetesSystem: false
+    kubeScheduler: false
+    kubeStateMetrics: false
+    network: false
+    node: false
+    prometheus: false
+    prometheusOperator: false
+    time: false 

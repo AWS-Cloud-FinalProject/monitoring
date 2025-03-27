@@ -53,6 +53,29 @@ spec:
             prometheusOperator: false
             time: false
         
+        # EKS에서 불필요한 컴포넌트 비활성화
+        kubeControllerManager:
+          enabled: false
+        
+        kubeScheduler:
+          enabled: false
+        
+        kubeEtcd:
+          enabled: false
+        
+        kubeProxy:
+          enabled: false
+        
+        # 필요한 컴포넌트는 활성화
+        kubelet:
+          enabled: true
+        
+        coreDns:
+          enabled: true
+        
+        kubeApiServer:
+          enabled: false
+        
         # 의존성 차트에 값 전달하는 방식 수정 (기존 설정 유지)
         kube-prometheus-stack:
           defaultRules:
