@@ -7,6 +7,7 @@ metadata:
     app: prometheus
     role: alert-rules
     priority: critical
+    release: prometheus
 spec:
   groups:
   - name: kubernetes-critical-alerts

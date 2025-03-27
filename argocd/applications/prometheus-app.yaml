@@ -24,7 +24,7 @@ spec:
         # 리소스 이름 단순화 설정
         fullnameOverride: prometheus
         
-        # 기본 규칙 명시적으로 비활성화
+        # 의존성 차트에 값 전달하는 방식 수정
         kube-prometheus-stack:
           defaultRules:
             create: false
@@ -53,6 +53,7 @@ spec:
               prometheus: false
               prometheusOperator: false
               time: false
+  
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

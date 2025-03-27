@@ -7,6 +7,7 @@ metadata:
     app: prometheus
     role: recording-rules
     priority: critical
+    release: prometheus
 spec:
   groups:
   - name: k8s.critical.rules
