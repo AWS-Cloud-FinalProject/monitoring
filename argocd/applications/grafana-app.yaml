@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd  # Argo CD가 설치된 네임스페이스
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring.git  # 여러분의 Git 저장소 URL
+    targetRevision: yong  # 또는 특정 브랜치/태그
+    path: grafana  # Git 저장소 내 Grafana 차트 위치
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc  # 클러스터 내부 API 서버
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true  # 삭제된 리소스 정리
+      selfHeal: true  # 변경 사항 자동 복구
+    syncOptions:
+      - CreateNamespace=true  # 네임스페이스 자동 생성

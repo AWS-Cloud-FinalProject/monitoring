@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana.fullname" . }}-dashboards
+  labels:
+    {{- include "grafana.labels" . | nindent 4 }}
+data:
+  kubernetes.json: |-
+{{ .Files.Get "dashboards/kubernetes.json" | indent 4 }}
+  node-exporter.json: |-
+{{ .Files.Get "dashboards/node-exporter-full.json" | indent 4 }}
+  kube-state-metrics.json: |-
+{{ .Files.Get "dashboards/kube-state-metrics.json" | indent 4 }}
+  prometheus.json: |-
+{{ .Files.Get "dashboards/prometheus.json" | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana.fullname" . }}-datasources
+  labels:
+    {{- include "grafana.labels" . | nindent 4 }}
+data:
+  datasources.yaml: |-
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local
+        isDefault: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana.fullname" . }}-dashboards-provider
+  labels:
+    {{- include "grafana.labels" . | nindent 4 }}
+data:
+  dashboardproviders.yaml: |-
+    apiVersion: 1
+    providers:
+    - name: 'kubernetes'
+      orgId: 1
+      folder: 'Kubernetes'
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards
