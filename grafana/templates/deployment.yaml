@@ -41,8 +41,8 @@ spec:
           mountPath: /var/lib/grafana/dashboards/kubernetes.json
           subPath: kubernetes.json
         - name: grafana-dashboards-node-exporter
-          mountPath: /var/lib/grafana/dashboards/node-exporter.json
-          subPath: node-exporter.json
+          mountPath: /var/lib/grafana/dashboards/node-exporter-full.json
+          subPath: node-exporter-full.json
         - name: grafana-dashboards-kube-state-metrics
           mountPath: /var/lib/grafana/dashboards/kube-state-metrics.json
           subPath: kube-state-metrics.json

@@ -29,7 +29,7 @@ grafana:
   persistence:
     enabled: true
     size: 3Gi
-    storageClassName: gp3
+    storageClassName: gp2
 
   # 모니터링 노드 그룹에 배포 (EKS 환경에 맞게 수정)
   nodeSelector:
