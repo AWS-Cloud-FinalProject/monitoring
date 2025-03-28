@@ -40,9 +40,6 @@ spec:
         - name: grafana-dashboards-kubernetes
           mountPath: /var/lib/grafana/dashboards/kubernetes.json
           subPath: kubernetes.json
-        - name: grafana-dashboards-node-exporter
-          mountPath: /var/lib/grafana/dashboards/node-exporter-full.json
-          subPath: node-exporter-full.json
         - name: grafana-dashboards-kube-state-metrics
           mountPath: /var/lib/grafana/dashboards/kube-state-metrics.json
           subPath: kube-state-metrics.json
@@ -61,9 +58,6 @@ spec:
       - name: grafana-dashboards-kubernetes
         configMap:
           name: {{ include "grafana.fullname" . }}-dashboard-kubernetes
-      - name: grafana-dashboards-node-exporter
-        configMap:
-          name: {{ include "grafana.fullname" . }}-dashboard-node-exporter
       - name: grafana-dashboards-kube-state-metrics
         configMap:
           name: {{ include "grafana.fullname" . }}-dashboard-kube-state-metrics
