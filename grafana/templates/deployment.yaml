@@ -37,8 +37,18 @@ spec:
           {{- toYaml . | nindent 12 }}
         {{- end }}
         volumeMounts:
-        - name: grafana-dashboards
-          mountPath: /var/lib/grafana/dashboards
+        - name: grafana-dashboards-kubernetes
+          mountPath: /var/lib/grafana/dashboards/kubernetes.json
+          subPath: kubernetes.json
+        - name: grafana-dashboards-node-exporter
+          mountPath: /var/lib/grafana/dashboards/node-exporter.json
+          subPath: node-exporter.json
+        - name: grafana-dashboards-kube-state-metrics
+          mountPath: /var/lib/grafana/dashboards/kube-state-metrics.json
+          subPath: kube-state-metrics.json
+        - name: grafana-dashboards-prometheus
+          mountPath: /var/lib/grafana/dashboards/prometheus.json
+          subPath: prometheus.json
         - name: grafana-datasources
           mountPath: /etc/grafana/provisioning/datasources
         - name: grafana-dashboard-providers
@@ -48,9 +58,18 @@ spec:
           mountPath: /var/lib/grafana
         {{- end }}
       volumes:
-      - name: grafana-dashboards
+      - name: grafana-dashboards-kubernetes
         configMap:
-          name: {{ include "grafana.fullname" . }}-dashboards
+          name: {{ include "grafana.fullname" . }}-dashboard-kubernetes
+      - name: grafana-dashboards-node-exporter
+        configMap:
+          name: {{ include "grafana.fullname" . }}-dashboard-node-exporter
+      - name: grafana-dashboards-kube-state-metrics
+        configMap:
+          name: {{ include "grafana.fullname" . }}-dashboard-kube-state-metrics
+      - name: grafana-dashboards-prometheus
+        configMap:
+          name: {{ include "grafana.fullname" . }}-dashboard-prometheus
       - name: grafana-datasources
         configMap:
           name: {{ include "grafana.fullname" . }}-datasources
