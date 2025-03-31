@@ -1,15 +1,3 @@
-{{- /* Kubernetes Dashboard ConfigMap */ -}}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "grafana.fullname" . }}-dashboard-kubernetes
-  labels:
-    {{- include "grafana.labels" . | nindent 4 }}
-    grafana_dashboard: "1"
-data:
-  kubernetes.json: |-
-{{ .Files.Get "dashboards/kubernetes.json" | replace "${DS_PROMETHEUS}" "Prometheus" | indent 4 }}
----
 {{- /* Kubernetes Cluster Monitoring Dashboard ConfigMap */ -}}
 apiVersion: v1
 kind: ConfigMap
@@ -33,18 +21,6 @@ metadata:
 data:
   kube-state-metrics.json: |-
 {{ .Files.Get "dashboards/kube-state-metrics.json" | indent 4 }}
----
-{{- /* Prometheus Dashboard ConfigMap */ -}}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "grafana.fullname" . }}-dashboard-prometheus
-  labels:
-    {{- include "grafana.labels" . | nindent 4 }}
-    grafana_dashboard: "1"
-data:
-  prometheus.json: |-
-{{ .Files.Get "dashboards/prometheus.json" | replace "${DS_THEMIS}" "Prometheus" | indent 4 }}
 ---
 {{- /* Datasources ConfigMap */ -}}
 apiVersion: v1
