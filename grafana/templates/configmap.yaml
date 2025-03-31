@@ -8,7 +8,9 @@ metadata:
     grafana_dashboard: "1"
 data:
   kubernetes.json: |-
-{{ .Files.Get "dashboards/kubernetes.json" | indent 4 }}
+{{- $dashboard := .Files.Get "dashboards/kubernetes.json" | fromJson -}}
+{{- $dashboard := $dashboard | replace "${DS_PROMETHEUS}" .Values.grafana.datasources.prometheus.name -}}
+{{ $dashboard | toPrettyJson | indent 4 }}
 ---
 {{- /* Kube State Metrics Dashboard ConfigMap */ -}}
 apiVersion: v1
@@ -32,7 +34,9 @@ metadata:
     grafana_dashboard: "1"
 data:
   prometheus.json: |-
-{{ .Files.Get "dashboards/prometheus.json" | indent 4 }}
+{{- $dashboard := .Files.Get "dashboards/prometheus.json" | fromJson -}}
+{{- $dashboard := $dashboard | replace "${DS_THEMIS}" .Values.grafana.datasources.prometheus.name -}}
+{{ $dashboard | toPrettyJson | indent 4 }}
 ---
 {{- /* Datasources ConfigMap */ -}}
 apiVersion: v1
@@ -45,11 +49,11 @@ data:
   datasources.yaml: |-
     apiVersion: 1
     datasources:
-      - name: Prometheus
+      - name: {{ .Values.grafana.datasources.prometheus.name }}
         type: prometheus
         access: proxy
-        url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
-        isDefault: true
+        url: {{ .Values.grafana.datasources.prometheus.url }}
+        isDefault: {{ .Values.grafana.datasources.prometheus.isDefault }}
 ---
 {{- /* Dashboard Provider ConfigMap */ -}}
 apiVersion: v1
@@ -70,3 +74,5 @@ data:
       editable: true
       options:
         path: /var/lib/grafana/dashboards
+        foldersFromFilesStructure: false
+      updateIntervalSeconds: 10

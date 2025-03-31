@@ -8,7 +8,7 @@ grafana:
   # 이미지 설정
   image:
     repository: grafana/grafana
-    tag: "9.5.3"  # 최신 안정화 버전으로 업데이트
+    tag: 9.5.2
 
   # 리소스 요청 및 제한
   resources:
@@ -51,14 +51,10 @@ grafana:
   
   # 기본 데이터 소스 설정
   datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          access: proxy
-          url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local
-          isDefault: true
+    prometheus:
+      name: "Prometheus"
+      url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+      isDefault: true
   
   # 관리자 비밀번호 설정
   adminPassword: admin
