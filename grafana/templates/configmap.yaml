@@ -8,9 +8,8 @@ metadata:
     grafana_dashboard: "1"
 data:
   kubernetes.json: |-
-{{- $dashboard := .Files.Get "dashboards/kubernetes.json" | fromJson -}}
-{{- $dashboard := $dashboard | replace "${DS_PROMETHEUS}" .Values.grafana.datasources.prometheus.name -}}
-{{ $dashboard | toPrettyJson | indent 4 }}
+{{- $dashboard := .Files.Get "dashboards/kubernetes.json" | toString | replace "${DS_PROMETHEUS}" .Values.grafana.datasources.prometheus.name -}}
+{{ $dashboard | indent 4 }}
 ---
 {{- /* Kube State Metrics Dashboard ConfigMap */ -}}
 apiVersion: v1
@@ -34,9 +33,8 @@ metadata:
     grafana_dashboard: "1"
 data:
   prometheus.json: |-
-{{- $dashboard := .Files.Get "dashboards/prometheus.json" | fromJson -}}
-{{- $dashboard := $dashboard | replace "${DS_THEMIS}" .Values.grafana.datasources.prometheus.name -}}
-{{ $dashboard | toPrettyJson | indent 4 }}
+{{- $dashboard := .Files.Get "dashboards/prometheus.json" | toString | replace "${DS_THEMIS}" .Values.grafana.datasources.prometheus.name -}}
+{{ $dashboard | indent 4 }}
 ---
 {{- /* Datasources ConfigMap */ -}}
 apiVersion: v1
