@@ -10,6 +10,18 @@ data:
   kubernetes-cluster-monitoring.json: |-
 {{ .Files.Get "dashboards/Kubernetes-cluster-monitoring.json" | replace "${DS_PROMETHEUS}" "Prometheus" | indent 4 }}
 ---
+{{- /* Wiary Application Monitoring Dashboard ConfigMap */ -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana.fullname" . }}-dashboard-wiary-application-monitoring
+  labels:
+    {{- include "grafana.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+data:
+  wiary-application-monitoring.json: |-
+{{ .Files.Get "dashboards/Wiary-application-monitoring.json" | indent 4 }}
+---
 {{- /* Kube State Metrics Dashboard ConfigMap */ -}}
 apiVersion: v1
 kind: ConfigMap

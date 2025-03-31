@@ -40,6 +40,9 @@ spec:
         - name: grafana-dashboards-kubernetes-cluster-monitoring
           mountPath: /var/lib/grafana/dashboards/kubernetes-cluster-monitoring.json
           subPath: kubernetes-cluster-monitoring.json
+        - name: grafana-dashboards-wiary-application-monitoring
+          mountPath: /var/lib/grafana/dashboards/wiary-application-monitoring.json
+          subPath: wiary-application-monitoring.json
         - name: grafana-dashboards-kube-state-metrics
           mountPath: /var/lib/grafana/dashboards/kube-state-metrics.json
           subPath: kube-state-metrics.json
@@ -55,6 +58,9 @@ spec:
       - name: grafana-dashboards-kubernetes-cluster-monitoring
         configMap:
           name: {{ include "grafana.fullname" . }}-dashboard-kubernetes-cluster-monitoring
+      - name: grafana-dashboards-wiary-application-monitoring
+        configMap:
+          name: {{ include "grafana.fullname" . }}-dashboard-wiary-application-monitoring
       - name: grafana-dashboards-kube-state-metrics
         configMap:
           name: {{ include "grafana.fullname" . }}-dashboard-kube-state-metrics
