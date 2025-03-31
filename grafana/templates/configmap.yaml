@@ -10,6 +10,18 @@ data:
   kubernetes.json: |-
 {{ .Files.Get "dashboards/kubernetes.json" | replace "${DS_PROMETHEUS}" "Prometheus" | indent 4 }}
 ---
+{{- /* Node Exporter Dashboard ConfigMap */ -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana.fullname" . }}-dashboard-node-exporter
+  labels:
+    {{- include "grafana.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+data:
+  node-exporter-full.json: |-
+{{ .Files.Get "dashboards/node-exporter-full.json" | replace "${DS_PROMETHEUS}" "Prometheus" | indent 4 }}
+---
 {{- /* Kube State Metrics Dashboard ConfigMap */ -}}
 apiVersion: v1
 kind: ConfigMap
