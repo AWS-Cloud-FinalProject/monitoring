@@ -10,6 +10,18 @@ data:
   kubernetes.json: |-
 {{ .Files.Get "dashboards/kubernetes.json" | replace "${DS_PROMETHEUS}" "Prometheus" | indent 4 }}
 ---
+{{- /* Kubernetes Cluster Monitoring Dashboard ConfigMap */ -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana.fullname" . }}-dashboard-kubernetes-cluster-monitoring
+  labels:
+    {{- include "grafana.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+data:
+  kubernetes-cluster-monitoring.json: |-
+{{ .Files.Get "dashboards/Kubernetes-cluster-monitoring.json" | replace "${DS_PROMETHEUS}" "Prometheus" | indent 4 }}
+---
 {{- /* Kube State Metrics Dashboard ConfigMap */ -}}
 apiVersion: v1
 kind: ConfigMap
