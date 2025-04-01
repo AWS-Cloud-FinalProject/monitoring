@@ -20,7 +20,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 315,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 2,
   "links": [
     {
       "asDropdown": true,
@@ -1703,6 +1703,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 0,
           "mappings": [
             {
               "options": {
@@ -1727,7 +1728,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -1782,6 +1783,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 0,
           "mappings": [
             {
               "options": {
@@ -1861,6 +1863,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 0,
           "mappings": [
             {
               "options": {
@@ -2960,8 +2963,8 @@
     ]
   },
   "time": {
-    "from": "2025-03-31T06:22:16.924Z",
-    "to": "2025-03-31T06:32:16.924Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -2991,6 +2994,6 @@
   "timezone": "browser",
   "title": "Kubernetes cluster monitoring (via Prometheus)",
   "uid": "e182b7b8-71f5-494d-93ee-47080818f2c8",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }
