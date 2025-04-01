@@ -19,7 +19,20 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 5,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "detail-monitoring",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "liveNow": false,
   "panels": [
     {
@@ -879,6 +892,6 @@
   "timezone": "",
   "title": "Wiary application monitoring",
   "uid": "e90b3ea2-1ada-4756-8a53-d5c4081dfa7e",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }
