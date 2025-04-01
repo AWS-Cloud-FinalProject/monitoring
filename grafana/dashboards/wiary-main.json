@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 6,
   "links": [
     {
       "asDropdown": true,
@@ -1007,7 +1006,7 @@
         "pieType": "pie",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
@@ -1616,7 +1615,7 @@
         "pieType": "pie",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
@@ -1679,7 +1678,7 @@
         "pieType": "pie",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
@@ -1890,7 +1889,7 @@
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -1955,16 +1954,37 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": ""
               }
             ]
           },
           "unit": "none"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비정상 파드 수"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 5,
@@ -1976,28 +1996,28 @@
       "links": [],
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "none",
+        "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "last"
           ],
           "fields": "",
           "values": false
         },
-        "text": {},
         "textMode": "auto"
       },
       "pluginVersion": "9.5.2",
       "targets": [
         {
           "datasource": {
-            "uid": "$datasource"
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count(kube_pod_status_phase{phase=\"Running\"})",
+          "expr": "sum(kube_pod_status_phase{phase=\"Running\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "정상 파드 수",
@@ -2076,7 +2096,8 @@
           },
           "editorMode": "code",
           "expr": "sum(kube_pod_status_phase) by (phase)",
-          "legendFormat": "__auto",
+          "interval": "",
+          "legendFormat": "{{phase}}",
           "range": true,
           "refId": "A"
         }
