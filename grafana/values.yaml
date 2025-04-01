@@ -10,6 +10,12 @@ grafana:
     repository: grafana/grafana
     tag: 9.5.2
 
+  # 기본 홈 대시보드 설정
+  env:
+    GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: "/var/lib/grafana/dashboards/wiary-main.json"
+    GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/"
+    GF_AUTH_HOME_PAGE: "/d/a254d3a2-9418-4a0f-abd2-a12f497ce1eb/wiary-main"
+
   # 리소스 요청 및 제한
   resources:
     requests:
