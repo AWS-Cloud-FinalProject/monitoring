@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  namespace: monitoring
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush           {{ .Values.service.flush }}
+        Log_Level      {{ .Values.service.logLevel }}
+        Parsers_File   parsers.conf
+
+    [INPUT]
+        Name           tail
+        Path           {{ .Values.input.tail.path }}
+        Parser        {{ .Values.input.tail.parser }}
+        Tag           {{ .Values.input.tail.tag }}
+        Mem_Buf_Limit {{ .Values.input.tail.mem_buf_limit }}
+        Skip_Long_Lines {{ .Values.input.tail.skip_long_lines }}
+        DB            {{ .Values.input.tail.db }}
+        DB.Sync       Normal
+
+    [FILTER]
+        Name          kubernetes
+        Match         kube.*
+        Merge_Log    {{ .Values.filters.kubernetes.mergeLog }}
+        Keep_Log     {{ .Values.filters.kubernetes.keepLog }}
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On
+
+    [FILTER]
+        Name         grep
+        Match        kube.*
+        {{- range .Values.filters.grep.rules }}
+        {{- if .exclude }}
+        Exclude      {{ .key }} {{ .pattern }}
+        {{- else }}
+        Regex        {{ .key }} {{ .pattern }}
+        {{- end }}
+        {{- end }}
+
+    [OUTPUT]
+        Name         loki
+        Match        kube.*
+        Host         {{ .Values.output.loki.host }}
+        Port         {{ .Values.output.loki.port }}
+        Labels      {{ range .Values.output.loki.labels }}{{ . }},{{ end }}
+        Remove_Keys  {{ range .Values.output.loki.removeKeys }}{{ . }},{{ end }}
+        
+  parsers.conf: |
+    [PARSER]
+        Name         docker
+        Format       json
+        Time_Key     time
+        Time_Format  %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep    On
