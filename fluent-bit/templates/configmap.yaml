@@ -15,10 +15,16 @@ data:
         Path            {{ .Values.input.tail.path }}
         Parser          {{ .Values.input.tail.parser }}
         Tag             {{ .Values.input.tail.tag }}
+        {{- if .Values.input.tail.mem_buf_limit }}
         Mem_Buf_Limit   {{ .Values.input.tail.mem_buf_limit }}
+        {{- end }}
+        {{- if .Values.input.tail.skip_long_lines }}
         Skip_Long_Lines {{ .Values.input.tail.skip_long_lines }}
+        {{- end }}
+        {{- if .Values.input.tail.db }}
         DB              {{ .Values.input.tail.db }}
         DB.Sync         Normal
+        {{- end }}
 
     [FILTER]
         Name            kubernetes
@@ -52,8 +58,15 @@ data:
         Match           kube.*
         Host            {{ .Values.output.loki.host }}
         Port            {{ .Values.output.loki.port }}
-        Labels          {{- range .Values.output.loki.labels }}{{ . }},{{- end }}
-        Remove_Keys     {{- range .Values.output.loki.removeKeys }}{{ . }},{{- end }}
+        Labels          {{ range $index, $label := .Values.output.loki.labels }}{{if $index}},{{end}}{{ $label }}{{ end }}
+        Remove_Keys     {{ range $index, $key := .Values.output.loki.removeKeys }}{{if $index}},{{end}}{{ $key }}{{ end }}
+        
+    # 임시 로그 파일 출력 (Loki가 준비될 때까지)
+    [OUTPUT]
+        Name            file
+        Match           kube.*
+        Path            /var/fluent-bit/state/logs.json
+        Format          json_lines
         
   parsers.conf: |
     [PARSER]

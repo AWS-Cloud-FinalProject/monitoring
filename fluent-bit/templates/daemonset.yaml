@@ -42,6 +42,8 @@ spec:
         - name: varlibdockercontainers
           mountPath: /var/lib/docker/containers
           readOnly: true
+        - name: fluent-bit-state
+          mountPath: /var/fluent-bit/state
       volumes:
       - name: config
         configMap:
@@ -51,4 +53,8 @@ spec:
           path: /var/log
       - name: varlibdockercontainers
         hostPath:
-          path: /var/lib/docker/containers 
+          path: /var/lib/docker/containers
+      - name: fluent-bit-state
+        hostPath:
+          path: /var/fluent-bit/state
+          type: DirectoryOrCreate 

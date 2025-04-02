@@ -36,6 +36,9 @@ input:
     path: /var/log/containers/*.log
     parser: docker
     tag: kube.*
+    mem_buf_limit: 5MB
+    skip_long_lines: true
+    db: /var/fluent-bit/state/flb_kube.db
 
 # Kubernetes 메타데이터 추가 및 필터링
 filters:
