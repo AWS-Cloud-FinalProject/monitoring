@@ -26,18 +26,12 @@ data:
         Name            stdout
         Match           *
         
+
     [OUTPUT]
-        Name            loki
+        Name            file
         Match           *
-        Host            {{ .Values.output.loki.host }}
-        Port            {{ .Values.output.loki.port }}
-        Labels          job=fluent-bit
-        {{- range .Values.output.loki.labels }}
-        Labels          {{ . }}
-        {{- end }}
-        {{- if .Values.output.loki.removeKeys }}
-        Remove_Keys     {{ join "," .Values.output.loki.removeKeys }}
-        {{- end }}
+        Path            /tmp/fluent-bit.log
+        Format          json_lines
         
   parsers.conf: |
     [PARSER]
