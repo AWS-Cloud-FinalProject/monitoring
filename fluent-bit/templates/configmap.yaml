@@ -31,9 +31,7 @@ data:
         Match           *
         Host            {{ .Values.output.loki.host }}
         Port            {{ .Values.output.loki.port }}
-        {{- range .Values.output.loki.labels }}
-        Labels          {{ . }}
-        {{- end }}
+        Labels          namespace=$kubernetes['namespace_name'],app=$kubernetes['labels']['app'],pod_name=$kubernetes['pod_name'],pod_hash=$kubernetes['labels']['pod-template-hash']
         {{- if .Values.output.loki.removeKeys }}
         Remove_Keys     {{ join "," .Values.output.loki.removeKeys }}
         {{- end }}
