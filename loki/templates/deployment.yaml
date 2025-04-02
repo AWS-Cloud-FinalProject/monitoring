@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-loki
+  namespace: monitoring
+  labels:
+    app: {{ .Release.Name }}-loki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-loki
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-loki
+    spec:
+      serviceAccountName: {{ .Release.Name }}-loki
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      containers:
+        - name: loki
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config.file=/etc/loki/local-config.yaml
+          ports:
+            - name: http-metrics
+              containerPort: 3100
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki
+            - name: storage
+              mountPath: /loki
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-loki-config
+        - name: storage
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-loki-pvc 
