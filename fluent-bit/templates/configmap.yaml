@@ -17,10 +17,8 @@ data:
         Tag             {{ .Values.input.tail.tag }}
 
     [OUTPUT]
-        Name            file
+        Name            stdout
         Match           *
-        Path            /tmp/fluent-bit.log
-        Format          json_lines
         
   parsers.conf: |
     [PARSER]
