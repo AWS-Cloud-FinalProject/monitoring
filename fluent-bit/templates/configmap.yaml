@@ -13,8 +13,8 @@ data:
     [INPUT]
         Name            tail
         Path            {{ .Values.input.tail.path }}
-        Parser          {{ .Values.input.tail.parser }}
-        Tag             {{ .Values.input.tail.tag }}
+        Parser          docker
+        Tag             kube.*
         {{- if .Values.input.tail.mem_buf_limit }}
         Mem_Buf_Limit   {{ .Values.input.tail.mem_buf_limit }}
         {{- end }}
@@ -29,12 +29,11 @@ data:
     [FILTER]
         Name            kubernetes
         Match           kube.*
-        Merge_Log       {{ .Values.filters.kubernetes.mergeLog }}
-        Keep_Log        {{ .Values.filters.kubernetes.keepLog }}
+        Merge_Log       on
+        Keep_Log        off
         K8S-Logging.Parser On
         K8S-Logging.Exclude On
-        
-        {{- if .Values.filters.kubernetes.allowNamespaces }}
+        {{- if and .Values.filters.kubernetes.allowNamespaces (gt (len .Values.filters.kubernetes.allowNamespaces) 0) }}
         Kube_Tag_Prefix kube.var.log.containers.
         Regex_Parser    kube
         {{- range .Values.filters.kubernetes.allowNamespaces }}
@@ -42,25 +41,6 @@ data:
         {{- end }}
         {{- end }}
 
-    [FILTER]
-        Name            grep
-        Match           kube.*
-        {{- range .Values.filters.grep.rules }}
-        {{- if .exclude }}
-        Exclude         {{ .key }} {{ .pattern }}
-        {{- else }}
-        Regex           {{ .key }} {{ .pattern }}
-        {{- end }}
-        {{- end }}
-
-    [OUTPUT]
-        Name            loki
-        Match           kube.*
-        Host            {{ .Values.output.loki.host }}
-        Port            {{ .Values.output.loki.port }}
-        Labels          {{ range $index, $label := .Values.output.loki.labels }}{{if $index}},{{end}}{{ $label }}{{ end }}
-        Remove_Keys     {{ range $index, $key := .Values.output.loki.removeKeys }}{{if $index}},{{end}}{{ $key }}{{ end }}
-        
     # 임시 로그 파일 출력 (Loki가 준비될 때까지)
     [OUTPUT]
         Name            file
@@ -68,10 +48,35 @@ data:
         Path            /var/fluent-bit/state/logs.json
         Format          json_lines
         
+    # Loki로 로그 전송
+    [OUTPUT]
+        Name            loki
+        Match           kube.*
+        Host            {{ .Values.output.loki.host }}
+        Port            {{ .Values.output.loki.port }}
+        Labels          {{ range $index, $label := .Values.output.loki.labels }}{{if $index}},{{end}}{{ $label }}{{ end }}
+        Remove_Keys     {{ range $index, $key := .Values.output.loki.removeKeys }}{{if $index}},{{end}}{{ $key }}{{ end }}
+
   parsers.conf: |
     [PARSER]
         Name            docker
         Format          json
         Time_Key        time
         Time_Format     %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep       On
+
+    [PARSER]
+        Name            kube
+        Format          regex
+        Regex           ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+        Time_Key        time
+        Time_Format     %Y-%m-%dT%H:%M:%S.%L%z
+        Time_Keep       On
+
+    [PARSER]
+        Name            syslog
+        Format          regex
+        Regex           ^\<(?<pri>[0-9]+)\>(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<host>[^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
+        Time_Key        time
+        Time_Format     %b %d %H:%M:%S
         Time_Keep       On
