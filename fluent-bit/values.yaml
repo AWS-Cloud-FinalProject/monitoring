@@ -74,7 +74,7 @@ filters:
 # Loki로 로그 전송
 output:
   loki:
-    host: loki
+    host: loki-loki
     port: 3100
     labels:
       - namespace=$kubernetes['namespace_name']
