@@ -16,10 +16,33 @@ data:
         Parser          {{ .Values.input.tail.parser }}
         Tag             {{ .Values.input.tail.tag }}
 
+    [FILTER]
+        Name            kubernetes
+        Match           kube.*
+        Merge_Log       {{ .Values.filters.kubernetes.mergeLog }}
+        Keep_Log        {{ .Values.filters.kubernetes.keepLog }}
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On
+        
+        {{- if and .Values.filters.kubernetes.allowNamespaces (gt (len .Values.filters.kubernetes.allowNamespaces) 0) }}
+        Kube_Tag_Prefix kube.var.log.containers.
+        Regex_Parser    kube
+        {{- range .Values.filters.kubernetes.allowNamespaces }}
+        Kube_Namespace  {{ . }}
+        {{- end }}
+        {{- end }}
+
     [OUTPUT]
         Name            stdout
         Match           *
         
+    [OUTPUT]
+        Name            loki
+        Match           *
+        Host            {{ .Values.output.loki.host }}
+        Port            {{ .Values.output.loki.port }}
+        Labels          namespace=$kubernetes['namespace_name'],app=$kubernetes['labels']['app']
+
   parsers.conf: |
     [PARSER]
         Name            docker
