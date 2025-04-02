@@ -18,7 +18,7 @@ tolerations:
   - operator: Exists
 
 nodeSelector:
-  role: monitoring  # 모니터링 노드에만 배포
+  role: application  # 애플리케이션 노드에 배포하여 로그를 직접 수집
 
 # 메트릭 설정
 metrics:
