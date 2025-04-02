@@ -17,15 +17,16 @@ spec:
     spec:
       serviceAccountName: {{ .Release.Name }}-loki
       securityContext:
-        fsGroup: 10001
-        runAsUser: 10001
-        runAsGroup: 10001
+        fsGroup: 0
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
       initContainers:
         - name: init-directories
           image: busybox
-          command: ['sh', '-c', 'mkdir -p /loki/chunks /loki/rules /loki/index /loki/cache && chmod -R 777 /loki']
+          command: ['sh', '-c', 'mkdir -p /loki/chunks /loki/rules /loki/index /loki/cache']
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
           volumeMounts:
             - name: storage
               mountPath: /loki
@@ -34,8 +35,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: IfNotPresent
           securityContext:
-            runAsUser: 10001
-            runAsGroup: 10001
+            runAsUser: 0
+            runAsGroup: 0
           args:
             - -config.file=/etc/loki/local-config.yaml
           ports:
