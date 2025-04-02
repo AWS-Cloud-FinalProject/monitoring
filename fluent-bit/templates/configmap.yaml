@@ -6,30 +6,26 @@ metadata:
 data:
   fluent-bit.conf: |
     [SERVICE]
-        Flush         5
-        Log_Level     info
-        Parsers_File  parsers.conf
+        Flush           {{ .Values.service.flush }}
+        Log_Level       {{ .Values.service.logLevel }}
+        Parsers_File    parsers.conf
 
     [INPUT]
-        Name          tail
-        Path          /var/log/containers/*.log
-        Parser        docker
-        Tag           kube.*
-
-    [FILTER]
-        Name          kubernetes
-        Match         kube.*
-        Merge_Log     on
-        Keep_Log      off
+        Name            tail
+        Path            {{ .Values.input.tail.path }}
+        Parser          {{ .Values.input.tail.parser }}
+        Tag             {{ .Values.input.tail.tag }}
 
     [OUTPUT]
-        Name          stdout
-        Match         *
+        Name            file
+        Match           *
+        Path            /tmp/fluent-bit.log
+        Format          json_lines
         
   parsers.conf: |
     [PARSER]
-        Name          docker
-        Format        json
-        Time_Key      time
-        Time_Format   %Y-%m-%dT%H:%M:%S.%L
-        Time_Keep     On
+        Name            docker
+        Format          json
+        Time_Key        time
+        Time_Format     %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep       On
