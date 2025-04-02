@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/yourusername/monitoring.git  # 실제 GitHub 저장소 URL로 변경 필요
-    targetRevision: HEAD
+    repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring.git  # 실제 GitHub 저장소 URL로 변경 필요
+    targetRevision: yong
     path: fluent-bit
   destination:
     server: https://kubernetes.default.svc

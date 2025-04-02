@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ .Release.Name }}-fluent-bit
+  name: {{ .Release.Name }}
   namespace: {{ .Values.namespace }}
   labels:
-    app: {{ .Release.Name }}-fluent-bit
+    app: {{ .Release.Name }}
 spec:
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-fluent-bit
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-fluent-bit
+        app: {{ .Release.Name }}
     spec:
-      serviceAccountName: {{ .Release.Name }}-fluent-bit
+      serviceAccountName: {{ .Release.Name }}
       {{- if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
@@ -45,7 +45,7 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ .Release.Name }}-fluent-bit-config
+          name: {{ .Release.Name }}-config
       - name: varlog
         hostPath:
           path: /var/log
