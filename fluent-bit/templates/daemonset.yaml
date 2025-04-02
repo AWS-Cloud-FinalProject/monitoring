@@ -27,9 +27,6 @@ spec:
       - name: fluent-bit
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        securityContext:
-          privileged: true
-          runAsUser: 0
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         {{- if .Values.metrics.enabled }}
@@ -45,8 +42,6 @@ spec:
         - name: varlibdockercontainers
           mountPath: /var/lib/docker/containers
           readOnly: true
-        - name: fluent-bit-state
-          mountPath: /var/fluent-bit/state
       volumes:
       - name: config
         configMap:
@@ -56,8 +51,4 @@ spec:
           path: /var/log
       - name: varlibdockercontainers
         hostPath:
-          path: /var/lib/docker/containers
-      - name: fluent-bit-state
-        hostPath:
-          path: /var/fluent-bit/state
-          type: DirectoryOrCreate 
+          path: /var/lib/docker/containers 
