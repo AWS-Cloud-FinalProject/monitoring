@@ -27,8 +27,7 @@ data:
         Name            file
         Match           kube.*
         Path            /tmp/fluent-bit.log
-        Format          json_lines
-        
+        Format          json
   parsers.conf: |
     [PARSER]
         Name            docker
