@@ -26,13 +26,6 @@ data:
         Name            stdout
         Match           *
         
-
-    [OUTPUT]
-        Name            file
-        Match           *
-        Path            /tmp/fluent-bit.log
-        Format          json_lines
-        
   parsers.conf: |
     [PARSER]
         Name            docker
