@@ -23,4 +23,34 @@ data:
       filesystem:
         {{- toYaml .Values.config.storage_config.filesystem | nindent 8 }}
     limits_config:
-      {{- toYaml .Values.config.limits_config | nindent 6 }} 
+      {{- toYaml .Values.config.limits_config | nindent 6 }}
+      
+    # Single instance mode configuration
+    target: all
+    
+    # Use memberlist instead of Consul for ring
+    memberlist:
+      join_members:
+        - 127.0.0.1
+    
+    # Configure distributor, ingester and querier to use inmemory ring store
+    distributor:
+      ring:
+        kvstore:
+          store: inmemory
+    
+    ingester:
+      lifecycler:
+        ring:
+          kvstore:
+            store: inmemory
+          replication_factor: 1
+      chunk_idle_period: 30m
+      chunk_retain_period: 1m
+    
+    frontend:
+      max_outstanding_per_tenant: 4096
+      
+    querier:
+      engine:
+        timeout: 5m 
