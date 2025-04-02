@@ -33,7 +33,7 @@ nodeSelector:
 persistence:
   enabled: true
   size: 5Gi
-  storageClass: ""
+  storageClass: "gp2"
 
 config:
   auth_enabled: false
