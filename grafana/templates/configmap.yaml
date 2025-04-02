@@ -50,6 +50,11 @@ data:
         access: proxy
         url: {{ .Values.grafana.datasources.prometheus.url }}
         isDefault: {{ .Values.grafana.datasources.prometheus.isDefault }}
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki-loki.monitoring:3100
+        isDefault: false
 ---
 {{- /* Dashboard Provider ConfigMap */ -}}
 apiVersion: v1
