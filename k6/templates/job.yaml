@@ -6,13 +6,19 @@ metadata:
 spec:
   ttlSecondsAfterFinished: 3600
   template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5656"
     spec:
       containers:
       - name: k6
         image: grafana/k6:latest
         args:
         - run
-        {{- if and .Values.output.prometheus.enabled .Values.output.prometheus.remoteWriteUrl }}
+        {{- if .Values.output.prometheus.enabled }}
+        - --out
+        - prometheus=
         - --out
         - prometheus-remote-write=url={{ .Values.output.prometheus.remoteWriteUrl }}
         {{- end }}
