@@ -25,8 +25,8 @@ output:
   json:
     enabled: false  # 필요 없음, Fluent Bit가 로그 수집
   prometheus:
-    enabled: true   # 성능 메트릭을 위해 유지
-    remoteWriteUrl: "http://prometheus-kube-prometheus-prometheus.monitoring:9090/api/v1/write"
+    enabled: false  # 일시적으로 비활성화
+    remoteWriteUrl: "http://prometheus-kube-prometheus-prometheus.monitoring:9090/api/v1/remote_write"
 
 resources:
   requests:

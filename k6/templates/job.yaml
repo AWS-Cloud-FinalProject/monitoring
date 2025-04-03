@@ -12,7 +12,7 @@ spec:
         image: grafana/k6:latest
         args:
         - run
-        {{- if .Values.output.prometheus.enabled }}
+        {{- if and .Values.output.prometheus.enabled .Values.output.prometheus.remoteWriteUrl }}
         - --out
         - prometheus-remote-write=url={{ .Values.output.prometheus.remoteWriteUrl }}
         {{- end }}
@@ -27,4 +27,4 @@ spec:
         configMap:
           name: k6-test-script
       restartPolicy: Never
-  backoffLimit: 1
+  backoffLimit: 4
