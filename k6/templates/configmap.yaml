@@ -36,14 +36,19 @@ data:
     
     export default function (data) {
       try {
-        // 실제 서비스 엔드포인트로 변경 필요
-        const url = 'http://prometheus-kube-prometheus-prometheus.{{ .Release.Namespace }}:9090/api/v1/query?query=up';
+        // 백엔드 서비스 URL 사용
+        const baseUrl = '{{ .Values.targetUrl }}';
+        
+        // 백엔드 서비스의 health 엔드포인트로 요청
+        const url = `${baseUrl}/health`;
+        console.log(`요청 전송: ${url}`);
         
         const response = http.get(url);
         
         // 응답 확인
         check(response, {
           'status is 200': (r) => r.status === 200,
+          'response time < 500ms': (r) => r.timings.duration < 500,
         });
       } catch (e) {
         console.error(`Error during request: ${e.message}`);
