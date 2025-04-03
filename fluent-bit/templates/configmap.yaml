@@ -23,12 +23,12 @@ data:
         Keep_Log        off
 
 # 헬스체크와 메트릭스 엔드포인트 로그 필터링
-  filter-backend.conf: |
-    [FILTER]
-        Name            grep
-        Match           kube.var.log.containers.backend-*
-        Exclude         message .*"GET /health HTTP/1\.1" 200.*
-        Exclude         message .*"GET /metrics HTTP/1\.1" 200.*
+  # filter-backend.conf: |
+  #   [FILTER]
+  #       Name            grep
+  #       Match           kube.var.log.containers.backend-*
+  #       Exclude         message .*"GET /health HTTP/1\.1" 200.*
+  #       Exclude         message .*"GET /metrics HTTP/1\.1" 200.*
 
     [OUTPUT]
         Name            stdout
