@@ -9,7 +9,8 @@ metadata:
 spec:
   selector:
     matchLabels:
-      k8s-app: metrics-server
+      app.kubernetes.io/name: metrics-server
+      app.kubernetes.io/instance: metrics-server
   namespaceSelector:
     matchNames:
       - kube-system
