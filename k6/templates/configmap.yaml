@@ -9,8 +9,19 @@ data:
     import { sleep, check } from 'k6';
     
     export const options = {
-      vus: 5,        // 5명의 가상 사용자
-      duration: '30s', // 30초 동안 실행
+      scenarios: {
+        stress_test: {
+          executor: 'ramping-vus',
+          startVUs: 0,
+          stages: [
+            { duration: '1m', target: 50 },   // 1분 동안 50명으로 증가
+            { duration: '3m', target: 50 },   // 3분 동안 50명 유지
+            { duration: '1m', target: 100 },  // 1분 동안 100명으로 증가
+            { duration: '5m', target: 100 },  // 5분 동안 100명 유지
+            { duration: '1m', target: 0 },    // 1분 동안 0명으로 감소
+          ],
+        },
+      },
       thresholds: {
         http_req_duration: ['p(95)<500'], // 95%의 요청이 500ms 이하여야 함
         http_req_failed: ['rate<0.1'],     // 최대 10%까지 실패 허용
@@ -19,15 +30,14 @@ data:
     };
     
     export function setup() {
-      console.log('테스트 준비 중...');
+      console.log('고강도 부하 테스트 시작...');
       return { startTime: new Date() };
     }
     
     export default function (data) {
       try {
-        // Prometheus 서버에 요청
+        // 실제 서비스 엔드포인트로 변경 필요
         const url = 'http://prometheus-kube-prometheus-prometheus.{{ .Release.Namespace }}:9090/api/v1/query?query=up';
-        console.log(`Sending request to: ${url}`);
         
         const response = http.get(url);
         
@@ -35,19 +45,15 @@ data:
         check(response, {
           'status is 200': (r) => r.status === 200,
         });
-        
-        // 테스트 정보 로깅
-        console.log(`Response status: ${response.status}`);
-        console.log(`Response time: ${response.timings.duration} ms`);
       } catch (e) {
         console.error(`Error during request: ${e.message}`);
       }
       
-      // 메트릭 생성을 위한 약간의 시간 간격
-      sleep(0.5);
+      // 약간의 대기 시간 추가
+      sleep(0.1);
     }
     
     export function teardown(data) {
       const testDuration = (new Date() - data.startTime) / 1000;
-      console.log(`테스트 완료! 총 실행 시간: ${testDuration}초`);
+      console.log(`부하 테스트 완료! 총 실행 시간: ${testDuration}초`);
     }
