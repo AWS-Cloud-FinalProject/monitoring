@@ -15,20 +15,39 @@ data:
         http_req_duration: ['p(95)<500'], // 95%의 요청이 500ms 이하여야 함
         http_req_failed: ['rate<0.1'],     // 최대 10%까지 실패 허용
       },
+      summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)'],
     };
     
-    export default function () {
-      // Prometheus 서버에 요청
-      const url = 'http://prometheus-kube-prometheus-prometheus.{{ .Release.Namespace }}:9090/api/v1/query?query=up';
-      console.log(`Sending request to: ${url}`);
-      
-      const response = http.get(url);
-      
-      // 응답 확인
-      check(response, {
-        'status is 200': (r) => r.status === 200,
-      });
+    export function setup() {
+      console.log('테스트 준비 중...');
+      return { startTime: new Date() };
+    }
+    
+    export default function (data) {
+      try {
+        // Prometheus 서버에 요청
+        const url = 'http://prometheus-kube-prometheus-prometheus.{{ .Release.Namespace }}:9090/api/v1/query?query=up';
+        console.log(`Sending request to: ${url}`);
+        
+        const response = http.get(url);
+        
+        // 응답 확인
+        check(response, {
+          'status is 200': (r) => r.status === 200,
+        });
+        
+        // 테스트 정보 로깅
+        console.log(`Response status: ${response.status}`);
+        console.log(`Response time: ${response.timings.duration} ms`);
+      } catch (e) {
+        console.error(`Error during request: ${e.message}`);
+      }
       
       // 메트릭 생성을 위한 약간의 시간 간격
       sleep(0.5);
+    }
+    
+    export function teardown(data) {
+      const testDuration = (new Date() - data.startTime) / 1000;
+      console.log(`테스트 완료! 총 실행 시간: ${testDuration}초`);
     }

@@ -25,7 +25,7 @@ output:
   json:
     enabled: false  # 필요 없음, Fluent Bit가 로그 수집
   prometheus:
-    enabled: true   # 메트릭 수집을 위해 활성화
+    enabled: false  # 원격 쓰기 문제로 인해 비활성화
     remoteWriteUrl: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/api/v1/remote_write"
 
 resources:
