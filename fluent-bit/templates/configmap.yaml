@@ -22,6 +22,13 @@ data:
         Merge_Log       on
         Keep_Log        off
 
+# 헬스체크와 메트릭스 엔드포인트 로그 필터링
+    [FILTER]
+        Name            grep
+        Match           kube.var.log.containers.backend-*
+        Exclude         message Request: .* /health -
+        Exclude         message Request: .* /metrics -
+
     [OUTPUT]
         Name            stdout
         Match           *
