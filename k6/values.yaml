@@ -1,0 +1,37 @@
+# 백엔드 서비스 URL
+targetUrl: "http://backend-service.backend.svc.cluster.local"
+
+# 테스트할 엔드포인트
+endpoints:
+  - path: "/health"
+    method: "GET"
+  - path: "/metrics"
+    method: "GET"
+  - path: "/"
+    method: "GET"
+
+# 테스트 설정
+test:
+  duration:
+    rampUp: "30s"
+    steady: "2m"
+    rampDown: "30s"
+  vus: 30  # 가상 사용자 수
+
+# K6 메트릭 전송 설정
+output:
+  # 로키로 로그 전송
+  loki:
+    enabled: true
+    endpoint: "http://loki-loki.monitoring:3100/loki/api/v1/push"
+  prometheus:
+    enabled: true
+    remoteWriteUrl: "http://prometheus-kube-prometheus-prometheus.monitoring:9090/api/v1/write"
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
