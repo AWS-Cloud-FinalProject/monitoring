@@ -967,7 +967,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(kube_node_spec_unschedulable)",
+          "expr": "sum(kube_node_status_condition{condition=\"Ready\",status!=\"true\"} == 1) or sum(kube_node_spec_unschedulable) or vector(0)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1306,6 +1306,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "fill": 1,
@@ -1350,12 +1351,14 @@
           "datasource": {
             "uid": "$datasource"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "kube_node_status_condition{condition=\"Ready\",status=\"false\"}",
+          "expr": "sum by(node) (kube_node_status_condition{condition=\"Ready\",status=~\"false|unknown\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{node}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1398,6 +1401,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "fill": 1,
@@ -1442,8 +1446,9 @@
           "datasource": {
             "uid": "$datasource"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "kube_node_status_condition{condition=\"DiskPressure\",status=\"true\"}",
+          "expr": "sum by(node) (kube_node_status_condition{condition=\"Ready\",status=~\"false|unknown\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -1455,20 +1460,24 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "kube_node_status_condition{condition=\"MemoryPressure\",node=~\"$node\",cluster=~\"$cluster\",status=\"true\"}==1",
+          "editorMode": "code",
+          "expr": "sum by(node) (kube_node_status_condition{condition=\"MemoryPressure\",status=~\"true|unknown\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{node}} {{condition}}",
+          "range": true,
           "refId": "B"
         },
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "kube_node_status_condition{condition=~\"PIDPressure\",node=~\"$node\",cluster=~\"$cluster\",status=\"true\"}==1",
+          "editorMode": "code",
+          "expr": "sum by(node) (kube_node_status_condition{condition=\"PIDPressure\",status=~\"true|unknown\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{node}} {{condition}}",
+          "range": true,
           "refId": "C"
         }
       ],
@@ -2899,7 +2908,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 24,
         "x": 0,
         "y": 80
@@ -2959,7 +2968,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [
@@ -3036,8 +3045,8 @@
     ]
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "2025-04-03T16:14:19.025Z",
+    "to": "2025-04-03T16:24:19.025Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -3067,6 +3076,6 @@
   "timezone": "browser",
   "title": "Kubernetes cluster monitoring (via Prometheus)",
   "uid": "e182b7b8-71f5-494d-93ee-47080818f2c8",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }

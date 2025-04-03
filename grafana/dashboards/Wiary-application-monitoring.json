@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 5,
   "links": [
     {
       "asDropdown": true,
@@ -297,7 +296,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -331,7 +331,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{container=\"backend\"}[5m])) by (pod)",
+          "expr": "sum by(pod) (rate(container_cpu_usage_seconds_total{namespace=\"backend\", pod=~\"backend-deployment.*\"}[2m])) * 100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -359,8 +359,12 @@
                 "value": null
               },
               {
+                "color": "#EAB839",
+                "value": 200
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 300
               }
             ]
           },
@@ -398,7 +402,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_usage_bytes{container=\"backend\"}) by (pod) / 1024 / 1024",
+          "expr": " sum by(pod) (container_memory_working_set_bytes{namespace=\"backend\", pod=~\"backend-deployment.*\"}) / (1024 * 1024)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -542,7 +546,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(http_requests_total{container=\"backend\"}[5m])) by (instance)",
+          "expr": "sum by (pod) (rate(http_requests_total[5m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -877,7 +881,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -885,13 +889,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "2025-04-03T16:14:19.025Z",
+    "to": "2025-04-03T16:24:19.025Z"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Wiary application monitoring",
   "uid": "e90b3ea2-1ada-4756-8a53-d5c4081dfa7e",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }
