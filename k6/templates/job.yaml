@@ -27,4 +27,4 @@ spec:
         configMap:
           name: k6-test-script
       restartPolicy: Never
-  backoffLimit: 4
+  backoffLimit: 2

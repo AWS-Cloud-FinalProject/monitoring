@@ -1,5 +1,5 @@
 # 백엔드 서비스 URL
-targetUrl: "http://backend-service.backend.svc.cluster.local"
+targetUrl: "http://localhost:8080"  # 테스트용 임시 URL (실제 서비스로 변경 필요)
 
 # 테스트할 엔드포인트
 endpoints:
@@ -25,7 +25,7 @@ output:
   json:
     enabled: false  # 필요 없음, Fluent Bit가 로그 수집
   prometheus:
-    enabled: false  # 일시적으로 비활성화
+    enabled: false  # 단계별 테스트를 위해 일시적으로 비활성화
     remoteWriteUrl: "http://prometheus-kube-prometheus-prometheus.monitoring:9090/api/v1/remote_write"
 
 resources:

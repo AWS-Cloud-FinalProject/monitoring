@@ -8,21 +8,19 @@ data:
     import http from 'k6/http';
     import { sleep } from 'k6';
     
+    // 단계 1: 간단한 HTTP 요청 테스트
     export const options = {
-      vus: 1,
-      duration: '10s',
+      vus: 1,        // 1명의 가상 사용자
+      iterations: 5, // 5회 반복
     };
     
     export default function () {
-      try {
-        // 간단한 HTTP 요청 - 존재하는 서비스로 변경 필요
-        const url = 'http://{{ .Release.Namespace }}-prometheus-kube-prometheus-prometheus.{{ .Release.Namespace }}:9090/';
-        console.log(`Sending request to: ${url}`);
-        const response = http.get(url);
-        console.log(`Response status: ${response.status}`);
-      } catch (e) {
-        console.error(`Error: ${e.message}`);
-      }
+      // Prometheus 서버에 간단한 요청 테스트
+      const url = 'http://prometheus-kube-prometheus-prometheus.{{ .Release.Namespace }}:9090/';
+      console.log(`Sending request to: ${url}`);
+      
+      const response = http.get(url);
+      console.log(`Response status: ${response.status}`);
       
       sleep(1);
     }
