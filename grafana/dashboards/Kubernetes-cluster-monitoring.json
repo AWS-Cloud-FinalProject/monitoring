@@ -20,7 +20,6 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 315,
   "graphTooltip": 0,
-  "id": 2,
   "links": [
     {
       "asDropdown": true,
@@ -968,7 +967,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(kube_node_spec_unschedulable)",
+          "expr": "sum(kube_node_status_condition{condition=\"Ready\",status!=\"true\"} == 1) or sum(kube_node_spec_unschedulable) or vector(0)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -2994,6 +2993,6 @@
   "timezone": "browser",
   "title": "Kubernetes cluster monitoring (via Prometheus)",
   "uid": "e182b7b8-71f5-494d-93ee-47080818f2c8",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }
