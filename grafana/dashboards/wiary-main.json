@@ -872,10 +872,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": {},
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -943,7 +940,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "sum(kube_node_status_condition{condition=\"Ready\",status!=\"true\"} == 1) or sum(kube_node_spec_unschedulable) or vector(0)",
+          "expr": "sum(kube_node_spec_unschedulable)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1762,7 +1759,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "10.0.2.221:8000"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 6,
@@ -2008,7 +2030,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(kube_pod_status_phase{phase=~\"Failed|Pending|Unknown\"})",
+          "expr": "sum(kube_pod_status_phase{phase=~\"Failed|Pending|Unknown\"}) + count(kube_pod_deletion_timestamp) + sum(kube_pod_container_status_waiting_reason{reason=\"CrashLoopBackOff\"})",
           "hide": false,
           "legendFormat": "비정상 파드 수",
           "range": true,
@@ -2280,7 +2302,7 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
