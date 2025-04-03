@@ -21,7 +21,7 @@ spec:
         - run
         {{- if .Values.output.prometheus.enabled }}
         - --out
-        - prometheus-remote-write={{ .Values.output.prometheus.remoteWriteUrl }}
+        - prometheus={{ .Values.output.prometheus.remoteWriteUrl }}
         {{- end }}
         - /tests/load-test.js
         volumeMounts:

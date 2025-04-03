@@ -39,17 +39,19 @@ data:
         // 백엔드 서비스 URL 사용
         const baseUrl = '{{ .Values.targetUrl }}';
         
-        // 백엔드 서비스의 health 엔드포인트로 요청
-        const url = `${baseUrl}/health`;
-        console.log(`요청 전송: ${url}`);
+        // values.yaml에 정의된 모든 엔드포인트 테스트
+        {{- range .Values.endpoints }}
+        const url_{{ .path | replace "/" "_" }} = `${baseUrl}{{ .path }}`;
+        console.log(`요청 전송: ${url_{{ .path | replace "/" "_" }}}`);
         
-        const response = http.get(url);
+        const response_{{ .path | replace "/" "_" }} = http.{{ lower .method }}(url_{{ .path | replace "/" "_" }});
         
         // 응답 확인
-        check(response, {
-          'status is 200': (r) => r.status === 200,
-          'response time < 500ms': (r) => r.timings.duration < 500,
+        check(response_{{ .path | replace "/" "_" }}, {
+          '{{ .path }} status is 200': (r) => r.status === 200,
+          '{{ .path }} response time < 500ms': (r) => r.timings.duration < 500,
         });
+        {{- end }}
       } catch (e) {
         console.error(`Error during request: ${e.message}`);
       }
