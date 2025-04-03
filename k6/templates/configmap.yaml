@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   load-test.js: |
+    import http from 'k6/http';
     import { sleep } from 'k6';
     
     export const options = {
@@ -13,7 +14,15 @@ data:
     };
     
     export default function () {
-      // 아주 간단한 테스트 - 네트워크 연결 없이 단순 지연
-      console.log("테스트 실행 중...");
+      try {
+        // 간단한 HTTP 요청 - 존재하는 서비스로 변경 필요
+        const url = 'http://{{ .Release.Namespace }}-prometheus-kube-prometheus-prometheus.{{ .Release.Namespace }}:9090/';
+        console.log(`Sending request to: ${url}`);
+        const response = http.get(url);
+        console.log(`Response status: ${response.status}`);
+      } catch (e) {
+        console.error(`Error: ${e.message}`);
+      }
+      
       sleep(1);
     }
