@@ -12,10 +12,6 @@ spec:
         image: grafana/k6:latest
         args:
         - run
-        {{- if .Values.output.loki.enabled }}
-        - --out
-        - loki=endpoint={{ .Values.output.loki.endpoint }}
-        {{- end }}
         {{- if .Values.output.prometheus.enabled }}
         - --out
         - prometheus-remote-write=url={{ .Values.output.prometheus.remoteWriteUrl }}

@@ -7,7 +7,7 @@ endpoints:
     method: "GET"
   - path: "/metrics"
     method: "GET"
-  - path: "/"
+  - path: "/ping"
     method: "GET"
 
 # 테스트 설정
@@ -20,12 +20,12 @@ test:
 
 # K6 메트릭 전송 설정
 output:
-  # 로키로 로그 전송
   loki:
-    enabled: true
-    endpoint: "http://loki-loki.monitoring:3100/loki/api/v1/push"
+    enabled: false  # 필요 없음, Fluent Bit가 로그 수집
+  json:
+    enabled: false  # 필요 없음, Fluent Bit가 로그 수집
   prometheus:
-    enabled: true
+    enabled: true   # 성능 메트릭을 위해 유지
     remoteWriteUrl: "http://prometheus-kube-prometheus-prometheus.monitoring:9090/api/v1/write"
 
 resources:

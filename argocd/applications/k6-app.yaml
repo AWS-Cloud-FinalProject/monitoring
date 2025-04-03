@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/yourusername/yourrepo.git  # 실제 Git 저장소 URL로 변경
-    targetRevision: HEAD
+    repoURL: https://github.com/AWS-Cloud-FinalProject/monitoring.git  # 실제 Git 저장소 URL로 변경
+    targetRevision: yong
     path: k6
   destination:
     server: https://kubernetes.default.svc
@@ -18,7 +18,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
-      allowEmpty: false
     syncOptions:
       - CreateNamespace=true
       - PruneLast=true
