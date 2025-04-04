@@ -23,20 +23,20 @@ data:
         Keep_Log        off
 
     # 헬스체크와 메트릭스 엔드포인트 로그 필터링 - 모든 형식 포함
-    [FILTER]
-        Name            grep
-        Match           kube.var.log.containers.backend-*
-        Exclude         log .*GET /health.*
-        Exclude         log .*GET /metrics.*
+    # [FILTER]
+    #     Name            grep
+    #     Match           kube.var.log.containers.backend-*
+    #     Exclude         log .*GET /health.*
+    #     Exclude         log .*GET /metrics.*
 
     # 로깅 미들웨어에서 생성된 로그도 필터링
-    [FILTER]
-        Name            grep
-        Match           kube.var.log.containers.backend-*
-        Exclude         log .*Request: GET /health.*
-        Exclude         log .*Response: GET /health.*
-        Exclude         log .*Request: GET /metrics.*
-        Exclude         log .*Response: GET /metrics.*
+    # [FILTER]
+    #     Name            grep
+    #     Match           kube.var.log.containers.backend-*
+    #     Exclude         log .*Request: GET /health.*
+    #     Exclude         log .*Response: GET /health.*
+    #     Exclude         log .*Request: GET /metrics.*
+    #     Exclude         log .*Response: GET /metrics.*
 
     [OUTPUT]
         Name            stdout

@@ -331,7 +331,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(pod) (rate(container_cpu_usage_seconds_total{namespace=\"backend\", pod=~\"backend-deployment.*\"}[2m])) * 100",
+          "expr": "sum by(pod) (rate(container_cpu_usage_seconds_total{namespace=\"backend\", pod=~\"backend-deployment.*\"}[2m])) / \r\nsum by(pod) (kube_pod_container_resource_requests{namespace=\"backend\", pod=~\"backend-deployment.*\", resource=\"cpu\"}) * 100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -546,7 +546,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by (pod) (rate(http_requests_total[5m]))",
+          "expr": "sum by (pod) (rate(http_requests_total{namespace=\"backend\", pod=~\"backend-deployment.*\"}[5m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -881,7 +881,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -889,8 +889,8 @@
     "list": []
   },
   "time": {
-    "from": "2025-04-03T16:14:19.025Z",
-    "to": "2025-04-03T16:24:19.025Z"
+    "from": "now-5m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "",
